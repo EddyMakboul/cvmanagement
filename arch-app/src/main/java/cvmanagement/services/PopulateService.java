@@ -1,0 +1,48 @@
+package cvmanagement.services;
+
+import java.util.Date;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import cvmanagement.entities.Activity;
+import cvmanagement.entities.User;
+import cvmanagement.repositories.ActivityRepository;
+import cvmanagement.repositories.UserRepository;
+
+@Service
+public class PopulateService {
+
+	@Autowired
+	private ActivityRepository activityRepo;
+
+	@Autowired
+	private UserRepository userRepo;
+
+	@PostConstruct
+	public void populate() {
+		final Date birthDay = new Date();
+
+		for (int i = 0; i < 100000; i++) {
+
+			final User user = new User("nom" + i, "firstname" + i, "email" + i + "@hotmail.fr", birthDay, "pwsd" + i);
+			if (i % 2 == 0) {
+				user.setWebSite("myWebsite" + i + ".com");
+			}
+			userRepo.save(user);
+
+			Activity activity = new Activity(2018, "Projet", "MyProject");
+			activity.setDescription("une description");
+			activity.setWebSite("github");
+			activity.setUser(user);
+			activity = activityRepo.save(activity);
+
+			activityRepo.save(activity);
+
+		}
+
+	}
+
+}
