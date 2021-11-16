@@ -5,6 +5,7 @@ import java.util.Date;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import cvmanagement.entities.Activity;
@@ -21,13 +22,18 @@ public class PopulateService {
 	@Autowired
 	private UserRepository userRepo;
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
 	@PostConstruct
 	public void populate() {
 		final Date birthDay = new Date();
 
+		final String password = passwordEncoder.encode("password");
+
 		for (int i = 0; i < 100; i++) {
 
-			final User user = new User("nom" + i, "firstname" + i, "email" + i + "@hotmail.fr", birthDay, "pwsd" + i);
+			final User user = new User("nom" + i, "firstname" + i, "email" + i + "@hotmail.fr", birthDay, password);
 			if (i % 2 == 0) {
 				user.setWebSite("myWebsite" + i + ".com");
 			}
