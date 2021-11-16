@@ -75,4 +75,22 @@
 </div>
 <script src="${app}"></script>
 
+<div id="home">
+    <div class="container">	
+        <table class="table">
+		<tr>
+			<th>Nom Prenom</th>
+			<th>Actions</th>
+		</tr>
+			<tr v-for="movie in cvs">
+				<td>{{movie.nom}} {{movie.firstname}} </td>
+				<td> <button v-on:click="showCv()">Show Cv</button></td>
+			</tr>
+		</table>
+		</div>
+
+	<button v-on:click="previousPage()">previous page</button>
+	<button v-on:click="nextpage()">next page</button>
+</div>
+
 <%@ include file="/WEB-INF/jsp/footer.jsp"%>

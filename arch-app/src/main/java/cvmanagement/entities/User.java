@@ -46,6 +46,16 @@ public class User {
 	@OneToMany(mappedBy = "user")
 	private final List<Activity> activities = new ArrayList<>();
 
+	private String jwtToken;
+
+	public String getJwtToken() {
+		return jwtToken;
+	}
+
+	public void setJwtToken(String jwtToken) {
+		this.jwtToken = jwtToken;
+	}
+
 	public User() {
 		super();
 	}
@@ -59,7 +69,7 @@ public class User {
 		this.password = password;
 	}
 
-	public Long getid() {
+	public Long getidUser() {
 		return idUser;
 	}
 

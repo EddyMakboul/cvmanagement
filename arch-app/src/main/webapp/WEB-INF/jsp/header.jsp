@@ -24,4 +24,4 @@
 	<script src="${bootstrap_js}"></script>
 </head>
 <body>
-<a href="<c:url value="/logout" />">Logout</a>
+

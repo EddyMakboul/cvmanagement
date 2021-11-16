@@ -35,4 +35,10 @@ public class UserService {
 
 		return cvDtos;
 	}
+
+	public cvDTO findById(Long id) {
+		final ModelMapper modelMapper = new ModelMapper();
+		final User cv = userRepo.findById(id).get();
+		return modelMapper.map(cv, cvDTO.class);
+	}
 }

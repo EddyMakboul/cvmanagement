@@ -6,11 +6,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller()
 public class VueAppController {
-	
-	
-    @RequestMapping(value = "/app")
-    private ModelAndView hello() {
-        return new ModelAndView("app");
-    }
+
+	@RequestMapping(value = "/home")
+	private ModelAndView home() {
+		return new ModelAndView("home");
+	}
 
 }

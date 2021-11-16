@@ -25,7 +25,7 @@ public class PopulateService {
 	public void populate() {
 		final Date birthDay = new Date();
 
-		for (int i = 0; i < 100000; i++) {
+		for (int i = 0; i < 100; i++) {
 
 			final User user = new User("nom" + i, "firstname" + i, "email" + i + "@hotmail.fr", birthDay, "pwsd" + i);
 			if (i % 2 == 0) {

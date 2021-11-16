@@ -1,113 +1,127 @@
-const movie = {
-	name:null,
-	year:null,
-	description:null,
-};
+const API_URL = 'http://localhost:8081/api';
 
-const myApp = {
+class CvService {
+  getAllCvsPangined(pageNo, pageSize) {
+    return axios.get(API_URL + '/users', { params: { pageNo: pageNo, pageSize: pageSize } })
+  }
 
-    // Préparation des données
-    data() {
-        console.log("data");
-        return {
-            counter: 1,
-            message: "Hello",
-            list: [10, 20, 30],
-            axios: null,
-			movies:[],
-			movie:null,
-			editable:null,
-			errors:[],
-			isNew:null,
-			
-        }
-    },
-    // Mise en place de l'application
-    mounted() {
-        console.log("Mounted ");
-        this.axios = axios.create({
-            baseURL: 'http://localhost:8081/api/',
-            timeout: 1000,
-            headers: { 'Content-Type': 'application/json' },
-        });
-		this.axios.get('/movies')
-    			.then(r => {
-		        console.log("get all movies");
-		        this.movies = r.data;
-		    });
-    },
-
-    methods: {
-		refresh:function(){
-			this.axios.get('/movies')
-    			.then(r => {
-		        console.log("get all movies");
-		        this.movies = r.data;
-		    });
-		},
-		deleteMovie: function(id){
-			console.log("on supprimer un film");
-			this.axios.delete('/movies/' + id)
-				.then(r =>{
-					this.refresh.call();
-				});
-		},
-		getMovie:function(movie){
-			this.movie = movie;
-		},
-		populateMovies:function(){
-			this.axios.patch('/movies/')
-			.then(r =>{
-				this.refresh.call();
-			});
-		},
-		editMovie:function(movie){
-			this.editable = movie;
-		},
-		addMovie:function(){
-			this.editable = Object.create(movie);
-			this.isNew = true;
-		},
-		
-		submitMovie:function(){
-			if(this.editable.name == ""){
-				this.errors.name="le nom ne doit pas être vide'";
-			}
-			else{
-				this.errors.name = null;
-			}
-			if(this.editable.year < 1900 || this.editable.year > 2100){
-				this.errors.year = "l'age doit être comprise entre 1900 et 2100";
-			}
-			else{
-				this.errors.year = null;
-			}
-			if(this.editable.description.length > 200 ){
-				this.errors.description= "la description doit être inferieure à 200 charactères"
-			}
-			else{
-				this.errors.description = null;
-			}
-			if(this.errors.name == null && this.errors.year == null && this.errors.description == null){
-				if(this.isNew == null){
-					this.axios.put('/movies', this.editable)
-						.then(r =>{
-							this.editable = null;
-							this.refresh.call();
-						});
-				}
-				else {
-					this.axios.post('/movies', this.editable)
-						.then(r =>{
-							this.editable = null;
-							this.isNew = null;
-							this.refresh.call();
-						});
-				}
-				
-			}
-		},
-    }
+  getCvByUserId(id) {
+    return axios.get(API_URL + '/users/' + id)
+  }
 }
 
-Vue.createApp(myApp).mount('#myApp');
+
+const cvService = new CvService();
+
+const allCv = {
+  template: '<div id="home">\n' +
+    '<div class="container">	\n' +
+    '<table class="table">\n' +
+    '<tr>\n' +
+    '<th>Nom Prenom</th>\n' +
+    '<th>Actions</th>\n' +
+    '</tr>\n' +
+    '<tr v-for="cv in cvs">\n' +
+    '<td>{{cv.nom}} {{cv.firstname}} </td>\n' +
+    '<td> <router-link :to="\'/cv/\'+ cv.idUser">show</router-link></td>\n' +
+    '</tr>\n' +
+    '</table>\n' +
+    '</div>\n' +
+
+    '<button v-on:click="getPreviousPage()">previous page</button>\n' +
+    '<button v-on:click="getNextPage()">next page</button>\n' +
+    '</div>',
+  data() {
+    return {
+      cvs: [],
+      page: 0,
+      size: 15,
+    }
+  },
+  methods: {
+    getNextPage() {
+      this.page += 1;
+      cvService.getAllCvsPangined(this.page, this.size).then((response) => {
+        this.cvs = response.data;
+      });
+
+    },
+    getPreviousPage() {
+      if (this.page > 0) {
+        this.page -= 1;
+        cvService.getAllCvsPangined(this.page, this.size).then((response) => {
+          this.cvs = response.data;
+        });
+      }
+
+    },
+    searchPersosn() {
+
+    }
+
+  },
+  created() {
+    cvService.getAllCvsPangined(this.page, this.size).then((response) => {
+      this.cvs = response.data;
+    })
+  }
+}
+
+const cv = {
+  template: '<table class = "table table-striped">\n' +
+    '      <thead>\n' +
+    '      <tr>\n' +
+    '        <th>Id</th>\n' +
+    '        <th>First Name</th>\n' +
+    '        <th>Last Name</th>\n' +
+    '        <th>Email</th>\n' +
+    '      </tr>\n' +
+    '\n' +
+    '      </thead>\n' +
+    '      <tbody>\n' +
+    '      <tr v-for="cv in cv?.activities">\n' +
+    '        <td> {{cv?.title }}</td>\n' +
+    '        <td> {{cv?.description}}</td>\n' +
+    '        <td> {{cv?.year}}</td>\n' +
+    '        <td> {{cv?.webSite}}</td>\n' +
+    '      </tr>\n' +
+    '      </tbody>\n' +
+    '    </table>',
+  data() {
+    return {
+      cv: null,
+    }
+
+  },
+  methods: {
+
+  },
+  created() {
+    cvService.getCvByUserId(this.$route.params.id).then((response) => {
+      this.cv = response.data;
+    })
+  }
+}
+
+const login = {
+  template: '',
+  data() {
+
+  },
+  created() {
+
+  }
+}
+
+const routes = [
+  { path: '/', component: allCv },
+  { path: '/cv/:id', component: cv },
+]
+
+const router = new VueRouter({
+  routes
+})
+
+const app = new Vue({
+  router
+}).$mount('#app')
