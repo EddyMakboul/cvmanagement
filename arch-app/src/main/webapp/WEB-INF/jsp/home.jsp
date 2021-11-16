@@ -9,4 +9,5 @@
 <div id="app">
   <router-view></router-view>
 </div>
-<script src="${app}"></script>
+<script type="module" src="${app}"></script>
+<script type="module" src="cv.js"></script>
