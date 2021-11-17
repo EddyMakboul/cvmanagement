@@ -8,11 +8,14 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import cvmanagement.exception.CustomException;
+import cvmanagement.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -34,6 +37,9 @@ public class JwtTokenProvider {
 
 	@Autowired
 	private MyUserDetails myUserDetails;
+	
+	@Autowired
+	private UserRepository userRepo;
 
 	@PostConstruct
 	protected void init() {
@@ -56,11 +62,11 @@ public class JwtTokenProvider {
 	}
 
 	public Authentication getAuthentication(String token) {
-		final UserDetails userDetails = myUserDetails.loadUserByUsername(getUsername(token));
+		final UserDetails userDetails = myUserDetails.loadUserByUsername(getEmail(token));
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
-	public String getUsername(String token) {
+	public String getEmail(String token) {
 		return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
 	}
 
@@ -77,10 +83,18 @@ public class JwtTokenProvider {
 			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
 			return true;
 		} catch (JwtException | IllegalArgumentException e) {
-			// throw new CustomException("Expired or invalid JWT token",
-			// HttpStatus.INTERNAL_SERVER_ERROR);
-			throw new JwtException("Expired or invalid JWT token");
+			 throw new CustomException("Expired or invalid JWT token",HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	  public boolean tokenExist(String token) {
+		  if(userRepo.existsByJwtToken(token)) {
+			  return true;
+		  }
+		  else {
+			  throw new CustomException("token invalide", HttpStatus.CONFLICT);
+		  }
+		  
+	  }
 
 }

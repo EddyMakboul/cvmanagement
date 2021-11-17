@@ -3,6 +3,8 @@ package cvmanagement.services;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -87,4 +89,13 @@ public class UserService {
 		user.setJwtToken(null);
 		userRepo.save(user);
 	}
+
+	public cvDTO updateUser(HttpServletRequest req,cvDTO cv) {
+		User user = whoami(req);
+		return null;
+	}
+	
+	  public User whoami(HttpServletRequest req) {
+		    return userRepo.findUserByEmail(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(req)));
+		  }
 }

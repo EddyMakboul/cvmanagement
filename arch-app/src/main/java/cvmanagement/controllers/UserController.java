@@ -2,19 +2,24 @@ package cvmanagement.controllers;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import cvmanagement.DTO.cvDTO;
 import cvmanagement.entities.User;
 import cvmanagement.exception.CustomException;
+import cvmanagement.security.JwtTokenProvider;
 import cvmanagement.services.UserService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
@@ -24,6 +29,9 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private JwtTokenProvider provider;
 
 	@GetMapping
 	public ResponseEntity<List<cvDTO>> getAllCvDTO(@RequestParam(defaultValue = "0") Integer pageNo,
@@ -77,5 +85,20 @@ public class UserController {
 			return new ResponseEntity<>(e.getMessage(), e.getHttpStatus());
 		}
 
+	}
+	
+	@PutMapping()
+	public ResponseEntity<cvDTO> updateUser(HttpServletRequest req,@RequestBody cvDTO cv){
+		
+		try {
+			provider.tokenExist(provider.resolveToken(req));
+			cvDTO cvDTO = userService.updateUser(req,cv);
+			
+			return new ResponseEntity<>(cvDTO,HttpStatus.OK);
+			
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+		
 	}
 }
