@@ -52,7 +52,7 @@ public class UserController {
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<String> signin(@RequestBody String email, @RequestBody String password) {
+	public ResponseEntity<String> signin(@RequestParam String email,@RequestParam String password) {
 
 		try {
 			final String jwtToken = userService.login(email, password);
@@ -61,6 +61,7 @@ public class UserController {
 			return new ResponseEntity<>(e.getMessage(), e.getHttpStatus());
 		}
 
+		
 	}
 
 	@PostMapping("/signup")

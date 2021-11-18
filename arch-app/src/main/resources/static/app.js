@@ -1,14 +1,22 @@
 import { cv } from './cv.js'
 
-const API_URL = 'http://localhost:8081/api';
+
+axios = axios.create({
+  baseURL: 'http://localhost:8081/api/',
+  headers: { 'Content-Type': 'application/json' },
+});
 
 class CvService {
   getAllCvsPangined(pageNo, pageSize) {
-    return axios.get(API_URL + '/users', { params: { pageNo: pageNo, pageSize: pageSize } })
+    return axios.get('/users', { params: { pageNo: pageNo, pageSize: pageSize } })
   }
 
   getCvByUserId(id) {
-    return axios.get(API_URL + '/users/' + id)
+    return axios.get('/users/' + id)
+  }
+
+  postLogin(email, password) {
+    return axios.post('/users/signin?email=' + email + '&password=' + password)
   }
 }
 
@@ -69,45 +77,47 @@ const allCv = {
   }
 }
 
-const login = {
+const Login = {
   template: '<div>\n' +
-  '<form method="post">\n' +
-      '<div class="emailGroup">\n' +
-          '<label for="mail">Email</label>\n' +
-          '<input type="email" name="email" id="email" v-model="email"/>\n' +
-      '</div>\n' +
-      '<div class="pswGroup">\n' +
-          '<label for="password">Mot de passe : </label>\n' +
-          '<input type="password" name="password" id="password" v-model="password"/>\n' +
-      '</div>\n' +
-      '<div class="submit">\n' +
-          '<button type="submit" v-on:click="login()">Se connecter</button>\n' +
-      '</div>\n'+
-  '</form>\n' +
-'</div>',
+    '<form method="post">\n' +
+    '<div class="form-group">\n' +
+    '<label>Email</label>\n' +
+    '<input  v-model="email"/>\n' +
+    '</div>\n' +
+    '<div class="form-group">\n' +
+    '<label>Mot de passe : </label>\n' +
+    '<input v-model="password"/>\n' +
+    '</div>\n' +
+    '<div class="form-group">\n' +
+    '<button type="submit" v-on:click.prevent="login()">Se connecter</button>\n' +
+    '</div>\n' +
+    '</form>\n' +
+    '</div>',
   data() {
-    return{
-      email: null,
-      password: null,
+    return {
+      password: '',
+      email: '',
     }
   },
   methods: {
-    login(){
-        var t = null;
-        // alert(this.mail);
-        axios.post(API_URL + '/users/signin',
-        this.email, 
-          this.password)
-          .then((response)=>{alert(t);});
-        // alert(t);
-    }
+    login() {
+      cvService.postLogin(this.email, this.password).then(
+        (response) => {
+          localStorage.setItem('jwt', response.data)
+
+        }).catch((error) => {
+          alert(error.data);
+        })
+    },
+  },
+  created() {
   }
 }
 
 const routes = [
   { path: '/', component: allCv },
   { path: '/cv/:id', component: cv },
-  { path:'/login', component: login},
+  { path: '/login', component: Login },
 ]
 
 const router = new VueRouter({
