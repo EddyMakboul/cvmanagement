@@ -70,18 +70,44 @@ const allCv = {
 }
 
 const login = {
-  template: '',
+  template: '<div>\n' +
+  '<form method="post">\n' +
+      '<div class="emailGroup">\n' +
+          '<label for="mail">Email</label>\n' +
+          '<input type="email" name="email" id="email" v-model="email"/>\n' +
+      '</div>\n' +
+      '<div class="pswGroup">\n' +
+          '<label for="password">Mot de passe : </label>\n' +
+          '<input type="password" name="password" id="password" v-model="password"/>\n' +
+      '</div>\n' +
+      '<div class="submit">\n' +
+          '<button type="submit" v-on:click="login()">Se connecter</button>\n' +
+      '</div>\n'+
+  '</form>\n' +
+'</div>',
   data() {
-
+    return{
+      email: null,
+      password: null,
+    }
   },
-  created() {
-
+  methods: {
+    login(){
+        var t = null;
+        // alert(this.mail);
+        axios.post(API_URL + '/users/signin',
+        this.email, 
+          this.password)
+          .then((response)=>{alert(t);});
+        // alert(t);
+    }
   }
 }
 
 const routes = [
   { path: '/', component: allCv },
   { path: '/cv/:id', component: cv },
+  { path:'/login', component: login},
 ]
 
 const router = new VueRouter({
