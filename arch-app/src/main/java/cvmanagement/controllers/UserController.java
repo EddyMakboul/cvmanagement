@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.HttpRequestHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +28,7 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private JwtTokenProvider provider;
 
@@ -52,7 +51,7 @@ public class UserController {
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<String> signin(@RequestParam String email,@RequestParam String password) {
+	public ResponseEntity<String> signin(@RequestParam String email, @RequestParam String password) {
 
 		try {
 			final String jwtToken = userService.login(email, password);
@@ -61,7 +60,6 @@ public class UserController {
 			return new ResponseEntity<>(e.getMessage(), e.getHttpStatus());
 		}
 
-		
 	}
 
 	@PostMapping("/signup")
@@ -77,29 +75,43 @@ public class UserController {
 	}
 
 	@PostMapping("/logout")
-	public ResponseEntity<String> logout(@RequestBody User user) {
+	public ResponseEntity<String> logout(HttpServletRequest req) {
 
 		try {
-			userService.logout(user);
+			userService.logout(userService.whoami(req));
 			return new ResponseEntity<>("ok", HttpStatus.OK);
 		} catch (final CustomException e) {
 			return new ResponseEntity<>(e.getMessage(), e.getHttpStatus());
 		}
 
 	}
-	
+
 	@PutMapping()
-	public ResponseEntity<cvDTO> updateUser(HttpServletRequest req,@RequestBody cvDTO cv){
-		
+	public ResponseEntity<cvDTO> updateUser(HttpServletRequest req, @RequestBody cvDTO cv) {
+
 		try {
-			provider.tokenExist(provider.resolveToken(req));
-			cvDTO cvDTO = userService.updateUser(req,cv);
-			
-			return new ResponseEntity<>(cvDTO,HttpStatus.OK);
-			
-		} catch (Exception e) {
+			// provider.tokenExist(provider.resolveToken(req));
+			final cvDTO cvDTO = userService.updateUser(req, cv);
+
+			return new ResponseEntity<>(cvDTO, HttpStatus.OK);
+
+		} catch (final Exception e) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
-		
+
+	}
+
+	@GetMapping("/isconnected")
+	public ResponseEntity<Boolean> isConnected(HttpServletRequest req) {
+
+		final String token = provider.resolveToken(req);
+		if (provider.validateToken(token)) {
+			final User user = userService.whoami(req);
+			if (user != null) {
+				return new ResponseEntity<>(true, HttpStatus.OK);
+			}
+		}
+		return new ResponseEntity<>(false, HttpStatus.OK);
+
 	}
 }

@@ -7,7 +7,8 @@
 
 
 <div id="app">
-  <router-view></router-view>
+  
 </div>
 <script type="module" src="${app}"></script>
 <script type="module" src="cv.js"></script>
+<script type="module" src="login.js"></script>

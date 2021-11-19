@@ -67,8 +67,10 @@ public class UserService {
 		if (!passwordEncoder.matches(password, user.getPassword())) {
 			throw new CustomException("Invalid username/password supplied", HttpStatus.UNPROCESSABLE_ENTITY);
 		}
-
-		return jwtTokenProvider.createToken(email);
+		final String jwt = jwtTokenProvider.createToken(email);
+		user.setJwtToken(jwt);
+		userRepo.save(user);
+		return jwt;
 
 	}
 
@@ -90,12 +92,12 @@ public class UserService {
 		userRepo.save(user);
 	}
 
-	public cvDTO updateUser(HttpServletRequest req,cvDTO cv) {
-		User user = whoami(req);
+	public cvDTO updateUser(HttpServletRequest req, cvDTO cv) {
+		whoami(req);
 		return null;
 	}
-	
-	  public User whoami(HttpServletRequest req) {
-		    return userRepo.findUserByEmail(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(req)));
-		  }
+
+	public User whoami(HttpServletRequest req) {
+		return userRepo.findUserByEmail(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(req)));
+	}
 }

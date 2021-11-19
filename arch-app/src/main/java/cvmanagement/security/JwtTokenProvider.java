@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import cvmanagement.entities.AppUserRole;
 import cvmanagement.exception.CustomException;
 import cvmanagement.repositories.UserRepository;
 import io.jsonwebtoken.Claims;
@@ -37,7 +38,6 @@ public class JwtTokenProvider {
 
 	@Autowired
 	private MyUserDetails myUserDetails;
-	
 	@Autowired
 	private UserRepository userRepo;
 
@@ -46,9 +46,10 @@ public class JwtTokenProvider {
 		secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
 	}
 
-	public String createToken(String email) {
+	public String createToken(String username) {
 
-		final Claims claims = Jwts.claims().setSubject(email);
+		final Claims claims = Jwts.claims().setSubject(username);
+		claims.put("auth", AppUserRole.ROLE_CLIENT);
 
 		final Date now = new Date();
 		final Date validity = new Date(now.getTime() + validityInMilliseconds);
@@ -81,20 +82,16 @@ public class JwtTokenProvider {
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-			return true;
+			return tokenExist(token);
 		} catch (JwtException | IllegalArgumentException e) {
-			 throw new CustomException("Expired or invalid JWT token",HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	  public boolean tokenExist(String token) {
-		  if(userRepo.existsByJwtToken(token)) {
-			  return true;
-		  }
-		  else {
-			  throw new CustomException("token invalide", HttpStatus.CONFLICT);
-		  }
-		  
-	  }
+
+	private boolean tokenExist(String token) {
+		final Boolean user = userRepo.existsByJwtToken(token);
+
+		return user;
+	}
 
 }

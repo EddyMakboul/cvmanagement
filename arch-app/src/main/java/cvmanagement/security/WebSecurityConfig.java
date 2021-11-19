@@ -35,13 +35,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		// Entry points
 		http.authorizeRequests()//
-				.antMatchers("/**").permitAll()//
+				.antMatchers("/home").permitAll()//
+				.antMatchers("/users/signin").permitAll()//
+				.antMatchers("/users/signup").authenticated()//
+				.antMatchers("/users/logout").authenticated()//
+				.antMatchers("/users/isconnected").authenticated()//
 				.antMatchers("/h2-console/**/**").permitAll()
 				// Disallow everything else..
 				.anyRequest().permitAll();
-
-		// If a user try to access a resource without having enough permissions
-		http.exceptionHandling().accessDeniedPage("/login");
 
 		// Apply JWT
 		http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
@@ -76,5 +77,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
-
 }

@@ -1,6 +1,8 @@
 package cvmanagement.services;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -9,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import cvmanagement.entities.Activity;
+import cvmanagement.entities.AppUserRole;
 import cvmanagement.entities.User;
 import cvmanagement.repositories.ActivityRepository;
 import cvmanagement.repositories.UserRepository;
@@ -37,6 +40,7 @@ public class PopulateService {
 			if (i % 2 == 0) {
 				user.setWebSite("myWebsite" + i + ".com");
 			}
+			user.setAppUserRoles(new ArrayList<AppUserRole>(List.of(AppUserRole.ROLE_CLIENT)));
 			userRepo.save(user);
 
 			Activity activity = new Activity(2018, "Projet", "MyProject");

@@ -1,5 +1,5 @@
 import { cv } from './cv.js'
-
+import { Login } from './login.js'
 
 axios = axios.create({
   baseURL: 'http://localhost:8081/api/',
@@ -17,6 +17,14 @@ class CvService {
 
   postLogin(email, password) {
     return axios.post('/users/signin?email=' + email + '&password=' + password)
+  }
+
+  isConnected(jwt) {
+    return axios.get('/users/isconnected', { headers: { Authorization: 'Bearer ' + jwt } })
+  }
+
+  logout(jwt) {
+    return axios.post('/users/logout', { headers: { Authorization: 'Bearer ' + jwt } })
   }
 }
 
@@ -74,45 +82,12 @@ const allCv = {
     cvService.getAllCvsPangined(this.page, this.size).then((response) => {
       this.cvs = response.data;
     })
+
+    app.updateNav();
   }
 }
 
-const Login = {
-  template: '<div>\n' +
-    '<form method="post">\n' +
-    '<div class="form-group">\n' +
-    '<label>Email</label>\n' +
-    '<input  v-model="email"/>\n' +
-    '</div>\n' +
-    '<div class="form-group">\n' +
-    '<label>Mot de passe : </label>\n' +
-    '<input v-model="password"/>\n' +
-    '</div>\n' +
-    '<div class="form-group">\n' +
-    '<button type="submit" v-on:click.prevent="login()">Se connecter</button>\n' +
-    '</div>\n' +
-    '</form>\n' +
-    '</div>',
-  data() {
-    return {
-      password: '',
-      email: '',
-    }
-  },
-  methods: {
-    login() {
-      cvService.postLogin(this.email, this.password).then(
-        (response) => {
-          localStorage.setItem('jwt', response.data)
 
-        }).catch((error) => {
-          alert(error.data);
-        })
-    },
-  },
-  created() {
-  }
-}
 
 const routes = [
   { path: '/', component: allCv },
@@ -120,10 +95,55 @@ const routes = [
   { path: '/login', component: Login },
 ]
 
-const router = new VueRouter({
+export const router = new VueRouter({
   routes
 })
 
-const app = new Vue({
+const app = Vue.extend({
+  template:
+    '<div>\n' +
+    ' <nav class="navbar navbar-light bg-light justify-content-between">\n' +
+    '   <div v-if="(!connected)">\n' +
+    '     <a class="navbar-brand">\n' +
+    '       <router-link to="/login">login</router-link>\n' +
+    '     </a>\n' +
+    '   </div>\n' +
+    '   <div v-if="(connected)">\n' +
+    '     <a class="navbar-brand">\n' +
+    '       <button v-on:click="logout()">Logout</button>\n' +
+    '     </a>\n' +
+    '   </div>\n' +
+    ' </nav>\n' +
+    ' <router-view :key="$route.fullPath"></router-view>\n' +
+    '</div>',
+  data() {
+    return {
+      connected: false
+    }
+  },
+  methods: {
+    updateNav() {
+      var jwt = localStorage.getItem('jwt')
+      if (jwt != null) {
+        cvService.isConnected(jwt).then((response) => {
+          this.connected = response.data;
+        })
+      }
+    },
+    logout() {
+      var jwt = localStorage.getItem('jwt')
+      if (jwt != null) {
+        cvService.logout(jwt).then((response) => {
+          connected = false;
+          localStorage.removeItem('jwt')
+        })
+      }
+    }
+  },
+  created() {
+    this.updateNav();
+  }
+})
+new app({
   router
 }).$mount('#app')

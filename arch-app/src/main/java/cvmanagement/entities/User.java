@@ -6,7 +6,9 @@ import java.util.List;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -47,6 +49,17 @@ public class User {
 	private final List<Activity> activities = new ArrayList<>();
 
 	private String jwtToken;
+
+	@ElementCollection(fetch = FetchType.EAGER)
+	List<AppUserRole> appUserRoles;
+
+	public List<AppUserRole> getAppUserRoles() {
+		return appUserRoles;
+	}
+
+	public void setAppUserRoles(List<AppUserRole> appUserRoles) {
+		this.appUserRoles = appUserRoles;
+	}
 
 	public String getJwtToken() {
 		return jwtToken;
