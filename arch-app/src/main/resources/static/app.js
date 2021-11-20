@@ -1,4 +1,5 @@
 import { cv } from './cv.js'
+import {modifyCv} from './cv.js'
 
 
 axios = axios.create({
@@ -20,8 +21,15 @@ class CvService {
   }
 }
 
+class ActivityService {
+  updateActivity(activity){
+    return axios.put('/activities', activity);
+  }
+}
+
 
 export const cvService = new CvService();
+export const activityService = new ActivityService();
 
 const allCv = {
   template: '<div id="home">\n' +
@@ -118,6 +126,7 @@ const routes = [
   { path: '/', component: allCv },
   { path: '/cv/:id', component: cv },
   { path: '/login', component: Login },
+  { path:'/cv/modify/:id', component: modifyCv},
 ]
 
 const router = new VueRouter({
