@@ -42,6 +42,24 @@ public class UserController {
 
 	}
 
+	@GetMapping("/size")
+	public ResponseEntity<Integer> getDataSize(@RequestParam(defaultValue = "") String criteria) {
+
+		final Integer size = userService.getDataSize(criteria);
+
+		return new ResponseEntity<>(size, HttpStatus.OK);
+	}
+
+	@GetMapping("/search")
+	public ResponseEntity<List<cvDTO>> searchCvDto(@RequestParam(required = true) String criteria,
+			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "15") Integer pageSize) {
+
+		final List<cvDTO> usersDTO = userService.searchUsers(criteria, pageNo, pageSize);
+
+		return new ResponseEntity<>(usersDTO, HttpStatus.OK);
+
+	}
+
 	@GetMapping("/{id}")
 	public ResponseEntity<cvDTO> getcvDTO(@PathVariable Long id) {
 

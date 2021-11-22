@@ -26,13 +26,27 @@ class CvService {
   logout(jwt) {
     return axios.post('/users/logout', { headers: { Authorization: 'Bearer ' + jwt } })
   }
+
+  searchCvByCriteria(criteria, pageNo, pageSize) {
+    return axios.get('/users/search', { params: { criteria: criteria, pageNo: pageNo, pageSize: pageSize } })
+  }
+
+  size(criteria) {
+    return axios.get('/users/size', { params: { criteria: criteria } })
+  }
 }
 
 
 export const cvService = new CvService();
 
 const allCv = {
-  template: '<div id="home">\n' +
+  template:
+
+    '<div id="home">\n' +
+    '<form class="form-inline">\n' +
+    '        <input v-model="cvFilter" id="cvFilter" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">\n' +
+    '        <button  v-on:click.prevent="searchCvs()" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>\n' +
+    '</form>\n' +
     '<div class="container">	\n' +
     '<table class="table">\n' +
     '<tr>\n' +
@@ -54,27 +68,62 @@ const allCv = {
       cvs: [],
       page: 0,
       size: 15,
+      cvFilter: '',
+      isFiltered: false,
+      pageMax: 0,
     }
   },
   methods: {
     getNextPage() {
-      this.page += 1;
-      cvService.getAllCvsPangined(this.page, this.size).then((response) => {
-        this.cvs = response.data;
-      });
+      if (this.page < this.pageMax - 1) {
+        this.page += 1;
+        if (this.isFiltered) {
+          cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
+            this.cvs = response.data;
+          })
+        } else {
+          cvService.getAllCvsPangined(this.page, this.size).then((response) => {
+            this.cvs = response.data;
+          });
+        }
+      }
+
 
     },
     getPreviousPage() {
       if (this.page > 0) {
         this.page -= 1;
-        cvService.getAllCvsPangined(this.page, this.size).then((response) => {
-          this.cvs = response.data;
-        });
+        if (this.isFiltered) {
+          cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
+            this.cvs = response.data;
+          })
+        } else {
+          cvService.getAllCvsPangined(this.page, this.size).then((response) => {
+            this.cvs = response.data;
+          });
+        }
+
       }
 
     },
-    searchPersosn() {
+    searchCvs() {
+      this.page = 0;
+      this.isFiltered = true;
+      cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
+        this.cvs = response.data;
+      })
+      this.getSize();
 
+    },
+
+    getSize() {
+      cvService.size(this.cvFilter).then((response) => {
+        this.pageMax = Math.round(response.data / this.size)
+        if (this.pageMax < response.data / this.size) {
+          this.pageMax += 1;
+        }
+        console.log(this.pageMax)
+      })
     }
 
   },
@@ -83,7 +132,8 @@ const allCv = {
       this.cvs = response.data;
     })
 
-    app.updateNav();
+    this.getSize();
+
   }
 }
 
@@ -108,7 +158,7 @@ const app = Vue.extend({
     '       <router-link to="/login">login</router-link>\n' +
     '     </a>\n' +
     '   </div>\n' +
-    '   <div v-if="(connected)">\n' +
+    '   <div v-else-if="(connected)">\n' +
     '     <a class="navbar-brand">\n' +
     '       <button v-on:click="logout()">Logout</button>\n' +
     '     </a>\n' +
@@ -134,7 +184,7 @@ const app = Vue.extend({
       var jwt = localStorage.getItem('jwt')
       if (jwt != null) {
         cvService.logout(jwt).then((response) => {
-          connected = false;
+          this.connected = false;
           localStorage.removeItem('jwt')
         })
       }

@@ -100,4 +100,24 @@ public class UserService {
 	public User whoami(HttpServletRequest req) {
 		return userRepo.findUserByEmail(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(req)));
 	}
+
+	public List<cvDTO> searchUsers(String criteria, Integer pageNo, Integer pageSize) {
+		final Pageable page = PageRequest.of(pageNo, pageSize);
+
+		final Page<User> pageResult = userRepo.SearchUserByCriteria(criteria, page);
+
+		userRepo.findAll();
+		final List<cvDTO> cvDtos = new ArrayList<>();
+		final ModelMapper modelMapper = new ModelMapper();
+
+		for (final User user : pageResult.getContent()) {
+			cvDtos.add(modelMapper.map(user, cvDTO.class));
+		}
+
+		return cvDtos;
+	}
+
+	public Integer getDataSize(String criteria) {
+		return userRepo.sizeOfUser(criteria);
+	}
 }
