@@ -1,5 +1,5 @@
 import { cv } from './cv.js'
-import {modifyCv} from './cv.js'
+import { modifyCv } from './cv.js'
 
 import { Login } from './login.js'
 
@@ -39,7 +39,7 @@ class CvService {
 }
 
 class ActivityService {
-  updateActivity(activity){
+  updateActivity(activity) {
     return axios.put('/activities', activity);
   }
 }
@@ -152,11 +152,8 @@ const routes = [
   { path: '/', component: allCv },
   { path: '/cv/:id', component: cv },
   { path: '/login', component: Login },
+  { path: '/cv/modify/:id', component: modifyCv },
 ]
-
-export const router = new VueRouter({
-  routes
-})
 
 const app = Vue.extend({
   template:
@@ -202,18 +199,12 @@ const app = Vue.extend({
   created() {
     this.updateNav();
   }
-}
-
-const routes = [
-  { path: '/', component: allCv },
-  { path: '/cv/:id', component: cv },
-  { path: '/login', component: Login },
-  { path:'/cv/modify/:id', component: modifyCv},
-]
+})
 
 const router = new VueRouter({
-  routes
+  routes,
 })
+
 new app({
   router
 }).$mount('#app')
