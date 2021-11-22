@@ -59,6 +59,10 @@ public class Activity {
 		return idActivity;
 	}
 
+	public void setIdActivity(long idActivity) {
+		this.idActivity = idActivity;
+	}
+
 	public int getYear() {
 		return year;
 	}
