@@ -13,17 +13,23 @@ public class cvDTO {
 
 	private String firstname;
 
+	private String email;
+
+	private String webSite;
+
 	private List<Activity> activities = new ArrayList<>();
 
 	public cvDTO() {
 		super();
 	}
 
-	public cvDTO(long idUser, String nom, String firstname, List<Activity> activities) {
+	public cvDTO(long idUser, String nom, String firstname, String email, String webSite, List<Activity> activities) {
 		super();
 		this.idUser = idUser;
 		this.nom = nom;
 		this.firstname = firstname;
+		this.email = email;
+		this.webSite = webSite;
 		this.activities = activities;
 	}
 
@@ -49,6 +55,22 @@ public class cvDTO {
 
 	public void setFirstname(String firstname) {
 		this.firstname = firstname;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getWebSite() {
+		return webSite;
+	}
+
+	public void setWebSite(String webSite) {
+		this.webSite = webSite;
 	}
 
 	public List<Activity> getActivities() {

@@ -93,12 +93,20 @@ public class UserService {
 	}
 
 	public cvDTO updateUser(HttpServletRequest req, cvDTO cv) {
-		whoami(req);
-		return null;
+		User user = whoami(req);
+		user.setEmail(cv.getEmail());
+		user.setWebSite(cv.getWebSite());
+		userRepo.save(user);
+		final ModelMapper modelMapper = new ModelMapper();
+		return modelMapper.map(user, cvDTO.class);
 	}
 
 	public User whoami(HttpServletRequest req) {
 		return userRepo.findUserByEmail(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(req)));
+	}
+
+	public User whoami(long idUser) {
+		return userRepo.findById(idUser).get();
 	}
 
 	public List<cvDTO> searchUsers(String criteria, Integer pageNo, Integer pageSize) {
