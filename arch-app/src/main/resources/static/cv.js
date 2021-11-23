@@ -2,7 +2,8 @@ import { cvService } from './app.js'
 import { activityService } from './app.js'
 
 export const cv = {
-    template: '<table class = "table table-striped">\n' +
+    template: '<div>\n' + 
+    '<table class = "table table-striped">\n' +
         '      <thead>\n' +
         '      <tr>\n' +
         '        <th>Title</th>\n' +
@@ -20,11 +21,12 @@ export const cv = {
         '        <td> {{cv?.description}}</td>\n' +
         '        <td> {{cv?.year}}</td>\n' +
         '        <td> {{cv?.webSite}}</td>\n' +
-        '        <td> <router-link :to="\'/cv/\'+ idUser + \'/modify\'">Modifier</router-link>' +
-        '        <button v-on:click.prevent="deleteActivity(idUser)">Supprimer</button></td>\n' +
+        '        <td><button v-on:click.prevent="deleteActivity(idUser)">Supprimer</button></td>\n' +
         '      </tr>\n' +
         '      </tbody>\n' +
-        '    </table>',
+        '    </table>\n' +
+        '    <router-link :to="\'/cv/\'+ idUser + \'/modify\'">Modifier</router-link>' +
+        '</div>',
     data() {
         return {
             cv: null,
