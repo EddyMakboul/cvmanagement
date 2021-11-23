@@ -71,6 +71,7 @@ export const modifyCv = {
     '</div>\n',
     data(){
         return {
+            idUser: null,
             cv: null,
             mail:null,
             webSite: null,
@@ -83,17 +84,19 @@ export const modifyCv = {
                 // const movie = {name: "movie" + i, year: 1999 + i, description: "tu connais " + i}
                 activityService.updateActivity(this.cv.activities.at(i));
             }
-            // this.$router.go(-1) : this.$router.push('/')
             // TODO : verify if exists or not.
             this.cv.email = this.mail;
             this.cv.webSite = this.webSite;
             var jwt = localStorage.getItem('jwt');
             cvService.updateUser(this.cv, jwt);
+            // this.$router.go(-1) : this.$router.push('/')
+            this.$router.push('/cv/'+this.idUser);
         },
     },
     created(){
         cvService.getCvByUserId(this.$route.params.id).then((response) => {
             // alert('okok');
+            this.idUser = this.$route.params.id;
             this.cv = response.data;
             this.mail = this.cv.email;
             this.webSite = this.cv.webSite;
