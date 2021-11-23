@@ -34,3 +34,4 @@
     <script type="module" src="${app}"></script>
     <script type="module" src="cv.js"></script>
     <script type="module" src="login.js"></script>
+    <script type="module" src="cooptation.js"></script>

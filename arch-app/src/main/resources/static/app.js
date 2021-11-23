@@ -2,6 +2,7 @@ import { cv } from './cv.js'
 import { modifyCv } from './cv.js'
 
 import { Login } from './login.js'
+import { Cooptation } from './cooptation.js'
 
 axios = axios.create({
   baseURL: 'http://localhost:8081/api/',
@@ -153,6 +154,7 @@ const routes = [
   { path: '/cv/:id', component: cv },
   { path: '/login', component: Login },
   { path: '/cv/modify/:id', component: modifyCv },
+  { path: '/cooptation', component: Cooptation },
 ]
 
 let app = Vue.extend({

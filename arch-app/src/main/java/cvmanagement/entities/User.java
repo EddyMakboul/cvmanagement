@@ -13,6 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
 
 @Entity
 public class User {
@@ -30,7 +33,7 @@ public class User {
 	private String firstname;
 
 	@Basic
-	@Column(nullable = false,unique = true)
+	@Column(nullable = false)
 	private String email;
 
 	@Basic
@@ -38,6 +41,7 @@ public class User {
 	private String webSite;
 
 	@Basic
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
 	private Date birthDay;
 
