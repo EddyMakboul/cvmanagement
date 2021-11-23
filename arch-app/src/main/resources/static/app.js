@@ -161,7 +161,7 @@ const routes = [
   { path: '/', component: allCv },
   { path: '/cv/:id', component: cv },
   { path: '/login', component: Login },
-  { path: '/cv/modify/:id', component: modifyCv },
+  { path: '/cv/:id/modify', component: modifyCv },
 ]
 
 const app = Vue.extend({

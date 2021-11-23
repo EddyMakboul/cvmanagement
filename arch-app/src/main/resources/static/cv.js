@@ -20,7 +20,7 @@ export const cv = {
         '        <td> {{cv?.description}}</td>\n' +
         '        <td> {{cv?.year}}</td>\n' +
         '        <td> {{cv?.webSite}}</td>\n' +
-        '        <td> <router-link :to="\'/cv/modify/\'+ idUser">Modifier</router-link>' +
+        '        <td> <router-link :to="\'/cv/\'+ idUser + \'/modify\'">Modifier</router-link>' +
         '        <button v-on:click.prevent="deleteActivity(idUser)">Supprimer</button></td>\n' +
         '      </tr>\n' +
         '      </tbody>\n' +
