@@ -155,29 +155,14 @@ const routes = [
   { path: '/cv/modify/:id', component: modifyCv },
 ]
 
-const app = Vue.extend({
-  template:
-    '<div>\n' +
-    ' <nav class="navbar navbar-light bg-light justify-content-between">\n' +
-    '   <div v-if="(!connected)">\n' +
-    '     <a class="navbar-brand">\n' +
-    '       <router-link to="/login">login</router-link>\n' +
-    '     </a>\n' +
-    '   </div>\n' +
-    '   <div v-else-if="(connected)">\n' +
-    '     <a class="navbar-brand">\n' +
-    '       <button v-on:click="logout()">Logout</button>\n' +
-    '     </a>\n' +
-    '   </div>\n' +
-    ' </nav>\n' +
-    ' <router-view :key="$route.fullPath"></router-view>\n' +
-    '</div>',
+let app = Vue.extend({
   data() {
     return {
       connected: false
     }
   },
   methods: {
+
     updateNav() {
       var jwt = localStorage.getItem('jwt')
       if (jwt != null) {

@@ -27,6 +27,7 @@ export const Login = {
             cvService.postLogin(this.email, this.password).then(
                 (response) => {
                     localStorage.setItem('jwt', response.data)
+                    this.$emit('update-nav')
                     this.$router.push('/')
 
                 }).catch((error) => {
