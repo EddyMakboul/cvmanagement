@@ -1,5 +1,6 @@
 import { cv } from './cv.js'
 import { modifyCv } from './cv.js'
+import { addActivity } from './cv.js'
 
 import { Login } from './login.js'
 
@@ -50,6 +51,10 @@ class ActivityService {
   removeActivity(idActivity){
     // alert(idActivity);
     return axios.delete('/activities', {data:{idActivity}});
+  }
+
+  addActivity(activity){
+    return axios.post('/activities', activity);
   }
 }
 
@@ -162,6 +167,7 @@ const routes = [
   { path: '/cv/:id', component: cv },
   { path: '/login', component: Login },
   { path: '/cv/:id/modify', component: modifyCv },
+  { path:'/cv/:id/add', component: addActivity },
 ]
 
 const app = Vue.extend({

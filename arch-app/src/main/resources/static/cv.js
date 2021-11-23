@@ -25,6 +25,7 @@ export const cv = {
         '      </tr>\n' +
         '      </tbody>\n' +
         '    </table>\n' +
+        '    <router-link :to="\'/cv/\'+ idUser + \'/add\'">Ajouter une activité</router-link>\n' +
         '    <router-link :to="\'/cv/\'+ idUser + \'/modify\'">Modifier</router-link>' +
         '</div>',
     data() {
@@ -53,6 +54,55 @@ export const cv = {
             this.idUser = this.$route.params.id;
         })
     }
+}
+
+export const addActivity = {
+    template: '<div>\n' +
+    '<table class="table table-striped">\n' +
+    '          <thead>\n' +
+    '          <tr>\n' +
+    '               <th>Title</th>\n' +
+    '               <th>Nature</th>\n' +
+    '               <th>Description</th>\n' +
+    '               <th>Year</th>\n' +
+    '               <th>Website</th>\n' +
+    '          </tr>\n' +
+    '          </thead>\n' +
+    '\n' +
+    '          <tbody>\n' +
+    '          <tr>\n' +
+    '               <td><input type="text" v-model="cv.title" /></td>\n' +
+    '               <td><input type="text" v-model="cv.nature"/></td>\n' +
+    '               <td><input type="text" v-model="cv.description"/></td>\n' +
+    '               <td><input type="text" v-model="cv.year"/></td>\n' +
+    '               <td><input type="text" v-model="cv.webSite"/></td>' +
+    '          </tr>\n' +
+    '          </tbody>\n' +
+    '          </table>\n' +
+    '          <button type="submit" v-on:click.prevent="goCvPage()">Valider Modification</button>' +
+    '</div>\n',
+    data(){
+        return {
+            idUser: null,
+            cv: {},
+            user: null,
+        }
+    },
+    methods: {
+        goCvPage(){
+            this.cv.user = this.user;
+            this.cv.idActivity = -1;
+            activityService.addActivity(this.cv);
+            this.$router.push('/cv/'+this.idUser);
+        },
+    },
+    created(){
+        cvService.getCvByUserId(this.$route.params.id).then((response) => {
+            // alert('okok');
+            this.idUser = this.$route.params.id;
+            this.user = response.data;
+        })
+    },
 }
 
 export const modifyCv = {

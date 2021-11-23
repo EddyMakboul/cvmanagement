@@ -38,4 +38,10 @@ public class ActivityService {
 		return null;
 	}
 
+	public Activity add(ActivityDTO activityDTO) {
+		Activity activity = transformDTOToActivity(activityDTO);
+		Activity newActivity = activityRepo.save(activity);
+		return newActivity;
+	}
+
 }
