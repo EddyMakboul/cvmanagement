@@ -20,7 +20,8 @@ export const cv = {
         '        <td> {{cv?.description}}</td>\n' +
         '        <td> {{cv?.year}}</td>\n' +
         '        <td> {{cv?.webSite}}</td>\n' +
-        '        <td> <router-link :to="\'/cv/modify/\'+ idUser">Modifier</router-link></td>\n' +
+        '        <td> <router-link :to="\'/cv/modify/\'+ idUser">Modifier</router-link>' +
+        '        <button v-on:click.prevent="deleteActivity(idUser)">Supprimer</button></td>\n' +
         '      </tr>\n' +
         '      </tbody>\n' +
         '    </table>',
@@ -32,7 +33,17 @@ export const cv = {
 
     },
     methods: {
-
+        deleteActivity(idUser){
+            var resultat = confirm("Voulez-vous vraiment supprimer cette activité ?");
+            if(resultat == true){
+                activityService.removeActivity(idUser);
+                cvService.getCvByUserId(this.idUser).then((response) =>{
+                    this.cv = response.data;
+                    this.idUser = this.$route.params.id;
+                })
+                // this.$router.push('/cv/'+this.idUser);
+            }
+        }
     },
     created() {
         cvService.getCvByUserId(this.$route.params.id).then((response) => {

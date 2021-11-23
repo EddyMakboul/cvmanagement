@@ -46,6 +46,11 @@ class ActivityService {
   updateActivity(activity) {
     return axios.put('/activities', activity);
   }
+
+  removeActivity(idActivity){
+    // alert(idActivity);
+    return axios.delete('/activities', {data:{idActivity}});
+  }
 }
 
 

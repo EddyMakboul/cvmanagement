@@ -29,4 +29,13 @@ public class ActivityService {
 		return activity;
 	}
 
+	public Activity remove(long idActivity) {
+		Activity activity = activityRepo.findById(idActivity).get();
+		if(activity != null) {
+			activityRepo.delete(activity);
+			return activity;
+		}
+		return null;
+	}
+
 }

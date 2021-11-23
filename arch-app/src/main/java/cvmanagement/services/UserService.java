@@ -105,10 +105,6 @@ public class UserService {
 		return userRepo.findUserByEmail(jwtTokenProvider.getEmail(jwtTokenProvider.resolveToken(req)));
 	}
 
-	public User whoami(long idUser) {
-		return userRepo.findById(idUser).get();
-	}
-
 	public List<cvDTO> searchUsers(String criteria, Integer pageNo, Integer pageSize) {
 		final Pageable page = PageRequest.of(pageNo, pageSize);
 
