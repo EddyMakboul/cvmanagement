@@ -38,6 +38,7 @@ public class UserController {
 	@Autowired
 	private JwtTokenProvider provider;
 
+
 	@Autowired
 	private LocalValidatorFactoryBean validators;
 

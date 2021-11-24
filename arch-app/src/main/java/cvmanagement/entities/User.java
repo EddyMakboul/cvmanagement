@@ -16,6 +16,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 @Entity
 public class User {
 
@@ -30,6 +32,7 @@ public class User {
 	@Basic
 	@Column(nullable = false)
 	private String firstname;
+	
 
 	@Basic
 	@Column(nullable = false)
@@ -41,6 +44,7 @@ public class User {
 
 	@Basic
 	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern = "DD/MM/yyyy")
 	@Column(nullable = false)
 	private Date birthDay;
 
