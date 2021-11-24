@@ -1,26 +1,32 @@
 package cvmanagement.controllers;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import cvmanagement.DTO.UserDTO;
 import cvmanagement.DTO.cvDTO;
 import cvmanagement.entities.User;
 import cvmanagement.exception.CustomException;
 import cvmanagement.security.JwtTokenProvider;
 import cvmanagement.services.UserService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 @RequestMapping("api/users")
 @Controller
@@ -31,6 +37,9 @@ public class UserController {
 
 	@Autowired
 	private JwtTokenProvider provider;
+
+	@Autowired
+	private LocalValidatorFactoryBean validators;
 
 	@GetMapping
 	public ResponseEntity<List<cvDTO>> getAllCvDTO(@RequestParam(defaultValue = "0") Integer pageNo,
@@ -117,6 +126,23 @@ public class UserController {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 
+	}
+
+	@PostMapping()
+	public ResponseEntity<Map<String, String>> createUser(HttpServletRequest req, @RequestBody UserDTO user) {
+		final Set<ConstraintViolation<UserDTO>> constraints = validators.validate(user);
+		final Map<String, String> errors = new HashMap<>();
+
+		for (final ConstraintViolation<UserDTO> constraint : constraints) {
+			errors.put(constraint.getPropertyPath().toString(), constraint.getMessage());
+		}
+
+		if (errors.isEmpty()) {
+			userService.createUser(user);
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+
+		return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
 	}
 
 	@GetMapping("/isconnected")

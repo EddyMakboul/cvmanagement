@@ -37,6 +37,10 @@ class CvService {
   size(criteria) {
     return axios.get('/users/size', { params: { criteria: criteria } })
   }
+
+  createUser(user, jwt) {
+    return axios.post('/users', user, { headers: { Authorization: 'Bearer ' + jwt } })
+  }
 }
 
 class ActivityService {

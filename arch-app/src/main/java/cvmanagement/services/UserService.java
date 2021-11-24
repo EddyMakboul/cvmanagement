@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import cvmanagement.DTO.UserDTO;
 import cvmanagement.DTO.cvDTO;
 import cvmanagement.entities.User;
 import cvmanagement.exception.CustomException;
@@ -119,5 +120,14 @@ public class UserService {
 
 	public Integer getDataSize(String criteria) {
 		return userRepo.sizeOfUser(criteria);
+	}
+
+	public void createUser(UserDTO userDTO) {
+		final ModelMapper modelMapper = new ModelMapper();
+
+		final User user = modelMapper.map(userDTO, User.class);
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		userRepo.save(user);
+
 	}
 }

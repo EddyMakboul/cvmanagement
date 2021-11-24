@@ -31,7 +31,7 @@ export const Login = {
                     this.$router.push('/')
 
                 }).catch((error) => {
-                    alert(error.data);
+                    alert(error.response.data);
                 })
         },
     },
