@@ -37,22 +37,6 @@ public class UserService {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
-	public List<cvDTO> getAllUsers(Integer pageNo, Integer pageSize) {
-
-		final Pageable page = PageRequest.of(pageNo, pageSize);
-
-		final Page<User> pageResult = userRepo.findAll(page);
-		final ModelMapper modelMapper = new ModelMapper();
-
-		final List<cvDTO> cvDtos = new ArrayList<>();
-
-		for (final User user : pageResult.getContent()) {
-			cvDtos.add(modelMapper.map(user, cvDTO.class));
-		}
-
-		return cvDtos;
-	}
-
 	public cvDTO findById(Long id) {
 		final ModelMapper modelMapper = new ModelMapper();
 		final User cv = userRepo.findById(id).get();
@@ -72,15 +56,6 @@ public class UserService {
 		user.setJwtToken(jwt);
 		userRepo.save(user);
 		return jwt;
-
-	}
-
-	public void signup(User user) {
-		if (userRepo.existsByEmail(user.getEmail())) {
-			throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
-		}
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		userRepo.save(user);
 
 	}
 
@@ -123,6 +98,11 @@ public class UserService {
 	}
 
 	public void createUser(UserDTO userDTO) {
+
+		if (userRepo.existsByEmail(userDTO.getEmail())) {
+			throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+		}
+
 		final ModelMapper modelMapper = new ModelMapper();
 
 		final User user = modelMapper.map(userDTO, User.class);

@@ -18,6 +18,7 @@
 	<head>
 	<meta charset="UTF-8">
 	<title>Spring boot application</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
 	<link rel="stylesheet" href="${css}">
 	<link rel="stylesheet" href="${bootstrap_css}">
 	<script src="${jquery_js}"></script>

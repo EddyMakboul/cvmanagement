@@ -10,9 +10,6 @@ axios = axios.create({
 });
 
 class CvService {
-  getAllCvsPangined(pageNo, pageSize) {
-    return axios.get('/users', { params: { pageNo: pageNo, pageSize: pageSize } })
-  }
 
   getCvByUserId(id) {
     return axios.get('/users/' + id)
@@ -27,7 +24,7 @@ class CvService {
   }
 
   logout(jwt) {
-    return axios.post('/users/logout', { headers: { Authorization: 'Bearer ' + jwt } })
+    return axios.get('/users/logout', { headers: { Authorization: 'Bearer ' + jwt } })
   }
 
   searchCvByCriteria(criteria, pageNo, pageSize) {
@@ -62,18 +59,26 @@ const allCv = {
     '        <button  v-on:click.prevent="searchCvs()" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>\n' +
     '</form>\n' +
     '<div class="container">	\n' +
-    '<table class="table">\n' +
-    '<tr>\n' +
-    '<th>Nom Prenom</th>\n' +
-    '<th>Actions</th>\n' +
-    '</tr>\n' +
-    '<tr v-for="cv in cvs">\n' +
-    '<td>{{cv.nom}} {{cv.firstname}} </td>\n' +
-    '<td> <router-link :to="\'/cv/\'+ cv.idUser">show</router-link></td>\n' +
-    '</tr>\n' +
-    '</table>\n' +
+    '<div id="card-container">\n' +
+    '    <div class="row justify-content-center mt-lg-3 mt-2 gx-lg-1 px-4 px-lg-0">\n' +
+    '        <div v-for="cv in cvs"\n' +
+    '            class="card col-xl-3 col-md-5 col-sm-8 mx-lg-3 mx-2 my-lg-4 my-sm-3 my-2 shadow border-0 h-auto">\n' +
+    '            <div class="card-body">\n' +
+    '                <div class="card-title row justify-content-between d-flex align-items-center">\n' +
+    '                    <h5 class="fs-5 col-auto mb-0">{{cv.nom}} {{cv.firstname}}</h5>\n' +
+    '                </div>\n' +
+    '                <h6 class="card-subtitle fs-6 mb-2 text-muted">{{employe?.role?.nom_role}}</h6>\n' +
+    '                <div id="skills-section" class="row justify-content-start mt-lg-2">\n' +
+    '                    <div v-for="activity in cv.activities" class="col-auto mx-lg-2 mx-1 my-lg-2 px-0">\n' +
+    '                        <span  class="badge bg- pastel - blue p-2"> {{activity.nature}}\n' +
+    '                        </span>\n' +
+    '                    </div>\n' +
+    '                </div>\n' +
+    '                \n' +
+    '            </div>\n' +
+    '        </div>\n' +
+    '    </div>\n' +
     '</div>\n' +
-
     '<button v-on:click="getPreviousPage()">previous page</button>\n' +
     '<button v-on:click="getNextPage()">next page</button>\n' +
     '</div>',
@@ -83,7 +88,6 @@ const allCv = {
       page: 0,
       size: 15,
       cvFilter: '',
-      isFiltered: false,
       pageMax: 0,
     }
   },
@@ -91,15 +95,10 @@ const allCv = {
     getNextPage() {
       if (this.page < this.pageMax - 1) {
         this.page += 1;
-        if (this.isFiltered) {
-          cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
-            this.cvs = response.data;
-          })
-        } else {
-          cvService.getAllCvsPangined(this.page, this.size).then((response) => {
-            this.cvs = response.data;
-          });
-        }
+        cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
+          this.cvs = response.data;
+        })
+
       }
 
 
@@ -107,22 +106,14 @@ const allCv = {
     getPreviousPage() {
       if (this.page > 0) {
         this.page -= 1;
-        if (this.isFiltered) {
-          cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
-            this.cvs = response.data;
-          })
-        } else {
-          cvService.getAllCvsPangined(this.page, this.size).then((response) => {
-            this.cvs = response.data;
-          });
-        }
-
+        cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
+          this.cvs = response.data;
+        })
       }
 
     },
     searchCvs() {
       this.page = 0;
-      this.isFiltered = true;
       cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
         this.cvs = response.data;
       })
@@ -142,7 +133,7 @@ const allCv = {
 
   },
   created() {
-    cvService.getAllCvsPangined(this.page, this.size).then((response) => {
+    cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
       this.cvs = response.data;
     })
 
@@ -183,6 +174,7 @@ let app = Vue.extend({
         cvService.logout(jwt).then((response) => {
           this.connected = false;
           localStorage.removeItem('jwt')
+          this.$router.push('/')
         })
       }
     }

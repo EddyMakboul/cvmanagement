@@ -41,16 +41,6 @@ public class UserController {
 	@Autowired
 	private LocalValidatorFactoryBean validators;
 
-	@GetMapping
-	public ResponseEntity<List<cvDTO>> getAllCvDTO(@RequestParam(defaultValue = "0") Integer pageNo,
-			@RequestParam(defaultValue = "15") Integer pageSize) {
-
-		final List<cvDTO> usersDTO = userService.getAllUsers(pageNo, pageSize);
-
-		return new ResponseEntity<>(usersDTO, HttpStatus.OK);
-
-	}
-
 	@GetMapping("/size")
 	public ResponseEntity<Integer> getDataSize(@RequestParam(defaultValue = "") String criteria) {
 
@@ -89,19 +79,7 @@ public class UserController {
 
 	}
 
-	@PostMapping("/signup")
-	public ResponseEntity<String> signup(@RequestBody User user) {
-
-		try {
-			userService.signup(user);
-			return new ResponseEntity<>("ok", HttpStatus.OK);
-		} catch (final CustomException e) {
-			return new ResponseEntity<>(e.getMessage(), e.getHttpStatus());
-		}
-
-	}
-
-	@PostMapping("/logout")
+	@GetMapping("/logout")
 	public ResponseEntity<String> logout(HttpServletRequest req) {
 
 		try {
