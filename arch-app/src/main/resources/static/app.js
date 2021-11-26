@@ -1,5 +1,6 @@
 import { cv } from './cv.js'
 import { modifyCv } from './cv.js'
+import { addActivity } from './cv.js'
 
 import { Login } from './login.js'
 import { Cooptation } from './cooptation.js'
@@ -35,6 +36,9 @@ class CvService {
     return axios.get('/users/size', { params: { criteria: criteria } })
   }
 
+  updateUser(userdto, jwt){
+    return axios.put('/users', userdto, { headers: { Authorization: 'Bearer ' + jwt } });
+    
   createUser(user, jwt) {
     return axios.post('/users', user, { headers: { Authorization: 'Bearer ' + jwt } })
   }
@@ -43,6 +47,15 @@ class CvService {
 class ActivityService {
   updateActivity(activity) {
     return axios.put('/activities', activity);
+  }
+
+  removeActivity(idActivity){
+    // alert(idActivity);
+    return axios.delete('/activities', {data:{idActivity}});
+  }
+
+  addActivity(activity){
+    return axios.post('/activities', activity);
   }
 }
 
@@ -148,8 +161,9 @@ const routes = [
   { path: '/', component: allCv },
   { path: '/cv/:id', component: cv },
   { path: '/login', component: Login },
-  { path: '/cv/modify/:id', component: modifyCv },
   { path: '/cooptation', component: Cooptation },
+  { path: '/cv/:id/modify', component: modifyCv },
+  { path:'/cv/:id/add', component: addActivity },
 ]
 
 let app = Vue.extend({

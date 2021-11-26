@@ -2,7 +2,8 @@ import { cvService } from './app.js'
 import { activityService } from './app.js'
 
 export const cv = {
-    template: '<table class = "table table-striped">\n' +
+    template: '<div>\n' + 
+    '<table class = "table table-striped">\n' +
         '      <thead>\n' +
         '      <tr>\n' +
         '        <th>Title</th>\n' +
@@ -20,10 +21,13 @@ export const cv = {
         '        <td> {{cv?.description}}</td>\n' +
         '        <td> {{cv?.year}}</td>\n' +
         '        <td> {{cv?.webSite}}</td>\n' +
-        '        <td> <router-link :to="\'/cv/modify/\'+ idUser">Modifier</router-link></td>\n' +
+        '        <td><button v-on:click.prevent="deleteActivity(idUser)">Supprimer</button></td>\n' +
         '      </tr>\n' +
         '      </tbody>\n' +
-        '    </table>',
+        '    </table>\n' +
+        '    <router-link :to="\'/cv/\'+ idUser + \'/add\'">Ajouter une activité</router-link>\n' +
+        '    <router-link :to="\'/cv/\'+ idUser + \'/modify\'">Modifier</router-link>' +
+        '</div>',
     data() {
         return {
             cv: null,
@@ -32,7 +36,17 @@ export const cv = {
 
     },
     methods: {
-
+        deleteActivity(idUser){
+            var resultat = confirm("Voulez-vous vraiment supprimer cette activité ?");
+            if(resultat == true){
+                activityService.removeActivity(idUser);
+                cvService.getCvByUserId(this.idUser).then((response) =>{
+                    this.cv = response.data;
+                    this.idUser = this.$route.params.id;
+                })
+                // this.$router.push('/cv/'+this.idUser);
+            }
+        }
     },
     created() {
         cvService.getCvByUserId(this.$route.params.id).then((response) => {
@@ -42,8 +56,58 @@ export const cv = {
     }
 }
 
+export const addActivity = {
+    template: '<div>\n' +
+    '<table class="table table-striped">\n' +
+    '          <thead>\n' +
+    '          <tr>\n' +
+    '               <th>Title</th>\n' +
+    '               <th>Nature</th>\n' +
+    '               <th>Description</th>\n' +
+    '               <th>Year</th>\n' +
+    '               <th>Website</th>\n' +
+    '          </tr>\n' +
+    '          </thead>\n' +
+    '\n' +
+    '          <tbody>\n' +
+    '          <tr>\n' +
+    '               <td><input type="text" v-model="cv.title" /></td>\n' +
+    '               <td><input type="text" v-model="cv.nature"/></td>\n' +
+    '               <td><input type="text" v-model="cv.description"/></td>\n' +
+    '               <td><input type="text" v-model="cv.year"/></td>\n' +
+    '               <td><input type="text" v-model="cv.webSite"/></td>' +
+    '          </tr>\n' +
+    '          </tbody>\n' +
+    '          </table>\n' +
+    '          <button type="submit" v-on:click.prevent="goCvPage()">Valider Modification</button>' +
+    '</div>\n',
+    data(){
+        return {
+            idUser: null,
+            cv: {},
+            user: null,
+        }
+    },
+    methods: {
+        goCvPage(){
+            this.cv.user = this.user;
+            this.cv.idActivity = -1;
+            activityService.addActivity(this.cv);
+            this.$router.push('/cv/'+this.idUser);
+        },
+    },
+    created(){
+        cvService.getCvByUserId(this.$route.params.id).then((response) => {
+            // alert('okok');
+            this.idUser = this.$route.params.id;
+            this.user = response.data;
+        })
+    },
+}
+
 export const modifyCv = {
-    template: '<table class="table table-striped">\n' +
+    template: '<div>\n' +
+    '<table class="table table-striped">\n' +
     '          <thead>\n' +
     '          <tr>\n' +
     '               <th>Title</th>\n' +
@@ -63,11 +127,17 @@ export const modifyCv = {
     '               <td><input type="text" v-model="cv?.activities.at(index).webSite"/></td>' +
     '          </tr>\n' +
     '          </tbody>\n' +
+    '          </table>\n' +
+    '          <p><label for="email">Email : </label><input type="text" v-model="mail" /></p>\n' +
+    '          <p><label for="webSite">Website : </label><input type="text" v-model="webSite"/></p>\n' +
     '          <button type="submit" v-on:click.prevent="goCvPage()">Valider Modification</button>' +
-    '          </table>\n',
+    '</div>\n',
     data(){
         return {
+            idUser: null,
             cv: null,
+            mail:null,
+            webSite: null,
         }
     },
     methods: {
@@ -77,14 +147,22 @@ export const modifyCv = {
                 // const movie = {name: "movie" + i, year: 1999 + i, description: "tu connais " + i}
                 activityService.updateActivity(this.cv.activities.at(i));
             }
+            // TODO : verify if exists or not.
+            this.cv.email = this.mail;
+            this.cv.webSite = this.webSite;
+            var jwt = localStorage.getItem('jwt');
+            cvService.updateUser(this.cv, jwt);
             // this.$router.go(-1) : this.$router.push('/')
+            this.$router.push('/cv/'+this.idUser);
         },
     },
     created(){
         cvService.getCvByUserId(this.$route.params.id).then((response) => {
             // alert('okok');
+            this.idUser = this.$route.params.id;
             this.cv = response.data;
-            // alert(response.data.activities.at(0).title);
+            this.mail = this.cv.email;
+            this.webSite = this.cv.webSite;
         })
     },
 }

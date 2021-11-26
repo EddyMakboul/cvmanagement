@@ -29,4 +29,19 @@ public class ActivityService {
 		return activity;
 	}
 
+	public Activity remove(long idActivity) {
+		Activity activity = activityRepo.findById(idActivity).get();
+		if(activity != null) {
+			activityRepo.delete(activity);
+			return activity;
+		}
+		return null;
+	}
+
+	public Activity add(ActivityDTO activityDTO) {
+		Activity activity = transformDTOToActivity(activityDTO);
+		Activity newActivity = activityRepo.save(activity);
+		return newActivity;
+	}
+
 }

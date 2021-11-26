@@ -93,11 +93,9 @@ public class UserController {
 
 	@PutMapping()
 	public ResponseEntity<cvDTO> updateUser(HttpServletRequest req, @RequestBody cvDTO cv) {
-
 		try {
 			// provider.tokenExist(provider.resolveToken(req));
 			final cvDTO cvDTO = userService.updateUser(req, cv);
-
 			return new ResponseEntity<>(cvDTO, HttpStatus.OK);
 
 		} catch (final Exception e) {
