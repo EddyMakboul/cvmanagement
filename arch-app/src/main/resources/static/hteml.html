@@ -1,0 +1,25 @@
+'<div id="card-container">\n' +
+    ' <div class="row justify-content-center mt-lg-3 mt-2 gx-lg-1 px-4 px-lg-0">\n' +
+        ' <div v-for="cv in cvs" \n'
+            + '            class="card col-xl-3 col-md-5 col-sm-8 mx-lg-3 mx-2 my-lg-4 my-sm-3 my-2 shadow border-0 h-auto">\n'
+            + '            <div class="card-body">\n'
+            + '                <div class="card-title row justify-content-between d-flex align-items-center">\n'
+            + '                    <h5 class="fs-5 col-auto mb-0">{{cv.nom}} {{cv.firstname}}</h5>\n'
+            + '                </div>\n'
+            + '                <h6 class="card-subtitle fs-6 mb-2 text-muted">{{employe?.role?.nom_role}}</h6>\n'
+            + '                <div id="skills-section" class="row justify-content-start mt-lg-2">\n'
+            + '                    <div v-for="activity in cv.activities" class="col-auto mx-lg-2 mx-1 my-lg-2 px-0">\n'
+            + '                        <span *ngIf="comp.niveau === Moyen'" class=" badge bg-pastel-blue p-2">
+            {{activity.nature}}\n' +
+            ' </span>\n' +
+            ' </div>\n' +
+        ' </div>\n' +
+    ' \n' +
+    ' </div>\n' +
+' </div>\n' +
+' </div>\n' +
+'</div>'
+
+<router-link :to="\'/cv/\'+ cv.idUser">show</router-link>
+
+<router-link class="btn btn-outline-danger mt-3 col-12" :to="\'/cv/\'+ cv.idUser">Show Cv</router-link>

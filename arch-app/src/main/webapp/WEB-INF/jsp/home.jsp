@@ -30,7 +30,9 @@
 
                     <li class="nav-item" v-if="(connected)">
                         <a class="nav-link">
-                            <router-link to="/cooptation">Cooptation</router-link>
+                            <router-link to="/cooptation">
+                             <button type="button" class="btn btn-link">Cooptation</button>
+                            </router-link>
                         </a>
                     </li>
 

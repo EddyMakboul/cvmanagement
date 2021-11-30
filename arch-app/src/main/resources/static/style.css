@@ -29,6 +29,19 @@ h2.heading-section {
 }
 
 i.bi.bi-person {
-    /* height: 87px; */
     font-size: 2rem;
+}
+
+.button-container {
+    margin: 0 auto;
+    text-align: center;
+}
+
+form.form-inline {
+    text-align: center;
+    padding: 2em;
+}
+
+.form-inline {
+    justify-content: center;
 }
