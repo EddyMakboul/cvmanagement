@@ -1,6 +1,7 @@
 package cvmanagement.DTO;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import cvmanagement.entities.Activity;
@@ -10,6 +11,8 @@ public class cvDTO {
 	private long idUser;
 
 	private String nom;
+
+	private Date birthDay;
 
 	private String firstname;
 
@@ -23,7 +26,8 @@ public class cvDTO {
 		super();
 	}
 
-	public cvDTO(long idUser, String nom, String firstname, String email, String webSite, List<Activity> activities) {
+	public cvDTO(long idUser, String nom, String firstname, String email, String webSite, List<Activity> activities,
+			Date birthDay) {
 		super();
 		this.idUser = idUser;
 		this.nom = nom;
@@ -31,6 +35,15 @@ public class cvDTO {
 		this.email = email;
 		this.webSite = webSite;
 		this.activities = activities;
+		this.birthDay = birthDay;
+	}
+
+	public Date getBirthDay() {
+		return birthDay;
+	}
+
+	public void setBirthDay(Date birthDay) {
+		this.birthDay = birthDay;
 	}
 
 	public long getIdUser() {

@@ -15,6 +15,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	@Query("Select u From User u where u.email = :email")
 	User findUserByEmail(@Param("email") String email);
 
+	@Query("Select u From User u where u.jwtToken = :jwtToken")
+	User findUserByJwt(@Param("jwtToken") String jwtToken);
+
 	boolean existsByEmail(String email);
 
 	boolean existsByJwtToken(String token);

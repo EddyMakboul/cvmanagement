@@ -1,4 +1,4 @@
-import { cvService } from './app.js'
+import { cvService } from './CvService.js'
 
 export const Login = {
     template:

@@ -1,46 +1,90 @@
-import { cvService } from './app.js'
+import { cvService } from './CvService.js'
 import { activityService } from './app.js'
 
 export const cv = {
-    template: '<div>\n' + 
-    '<table class = "table table-striped">\n' +
-        '      <thead>\n' +
-        '      <tr>\n' +
-        '        <th>Title</th>\n' +
-        '        <th>Nature</th>\n' +
-        '        <th>Description</th>\n' +
-        '        <th>Year</th>\n' +
-        '        <th>Website</th>\n' +
-        '      </tr>\n' +
-        '\n' +
-        '      </thead>\n' +
-        '      <tbody>\n' +
-        '      <tr v-for="cv in cv?.activities">\n' +
-        '        <td> {{cv?.title }}</td>\n' +
-        '        <td> {{cv?.nature}}</td>\n' +
-        '        <td> {{cv?.description}}</td>\n' +
-        '        <td> {{cv?.year}}</td>\n' +
-        '        <td> {{cv?.webSite}}</td>\n' +
-        '        <td><button v-on:click.prevent="deleteActivity(idUser)">Supprimer</button></td>\n' +
-        '      </tr>\n' +
-        '      </tbody>\n' +
-        '    </table>\n' +
-        '    <router-link :to="\'/cv/\'+ idUser + \'/add\'">Ajouter une activité</router-link>\n' +
-        '    <router-link :to="\'/cv/\'+ idUser + \'/modify\'">Modifier</router-link>' +
+    template: '<div class="container-fluid px-1 py-5 mx-auto">\n' +
+        '    <div class="row d-flex justify-content-center">\n' +
+        '        <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">\n' +
+        '            <h3>Profile</h3>\n' +
+        '            <div class="card">\n' +
+        '                <form class="form-card">\n' +
+        '                    <div class="row justify-content-between text-left">\n' +
+        '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
+        '                            <label class="form-control-label px-3">First name</label>\n' +
+        '                            <input type="text" id="fname" name="fname" v-model="cv.firstname" readonly >\n' +
+        '                        </div>\n' +
+        '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
+        '                            <label class="form-control-label px-3">Lastname</label>\n' +
+        '                            <input type="text" id="lname" name="lnale" v-model="cv.nom" readonly >\n' +
+        '                        </div>\n' +
+        '                    </div>\n' +
+        '                    <div class="row justify-content-between text-left">\n' +
+        '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
+        '                            <label class="form-control-label px-3">Email</label>\n' +
+        '                            <input type="text" id="email" name="email" v-model="cv.email" readonly >\n' +
+        '                        </div>\n' +
+        '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
+        '                            <label class="form-control-label px-3">WebSite</label>\n' +
+        '                            <input type="text" id="mob" name="mob" v-model="cv.webSite" readonly >\n' +
+        '                        </div>\n' +
+        '                    </div>\n' +
+        '                    <div class="row justify-content-between text-left">\n' +
+        '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
+        '                            <label class="form-control-label px-3">BirthDay</label>\n' +
+        '                            <input type="date" id="job" name="job" v-model="cv.birthDay" readonly >\n' +
+        '                        </div>\n' +
+        '                    </div>\n' +
+        '                    <div class="row justify-content-between text-left">\n' +
+        '                        <div class="form-group col-12 flex-column d-flex">\n' +
+        '                            <table class="table table-striped">\n' +
+        '                                <thead>\n' +
+        '                                    <tr>\n' +
+        '                                        <th>Title</th>\n' +
+        '                                        <th>Nature</th>\n' +
+        '                                        <th>Description</th>\n' +
+        '                                        <th>Year</th>\n' +
+        '                                        <th>Website</th>\n' +
+        '                                    </tr>\n' +
+        '                                </thead>\n' +
+        '                                <tbody>\n' +
+        '                                    <tr v-for="cv in cv?.activities">\n' +
+        '                                        <td> {{cv?.title }}</td>\n' +
+        '                                        <td> {{cv?.nature}}</td>\n' +
+        '                                        <td> {{cv?.description}}</td>\n' +
+        '                                        <td> {{cv?.year}}</td>\n' +
+        '                                        <td> {{cv?.webSite}}</td>\n' +
+        '                                        <div v-if="goodUser">\n' +
+        '                                            <td><button v-on:click.prevent="deleteActivity(idUser)">Supprimer</button>\n' +
+        '                                            </td>\n' +
+        '                                        </div>\n' +
+        '                                    </tr>\n' +
+        '                                </tbody>\n' +
+        '                            </table>\n' +
+        '                        </div>\n' +
+        '                    </div>\n' +
+        '                </form>\n' +
+        '                <div v-if="goodUser">\n' +
+        '                    <router-link :to="\'/cv/\'+ idUser + \'/add\'">Ajouter une activité</router-link>\n' +
+        '                    <router-link :to="\'/cv/\'+ idUser + \'/modify\'">Modifier</router-link>\n' +
+        '                </div>\n' +
+        '            </div>\n' +
+        '        </div>\n' +
+        '    </div>\n' +
         '</div>',
     data() {
         return {
             cv: null,
             idUser: -1,
+            goodUser: false,
         }
 
     },
     methods: {
-        deleteActivity(idUser){
+        deleteActivity(idUser) {
             var resultat = confirm("Voulez-vous vraiment supprimer cette activité ?");
-            if(resultat == true){
+            if (resultat == true) {
                 activityService.removeActivity(idUser);
-                cvService.getCvByUserId(this.idUser).then((response) =>{
+                cvService.getCvByUserId(this.idUser).then((response) => {
                     this.cv = response.data;
                     this.idUser = this.$route.params.id;
                 })
@@ -51,37 +95,52 @@ export const cv = {
     created() {
         cvService.getCvByUserId(this.$route.params.id).then((response) => {
             this.cv = response.data;
+            this.cv.birthDay = this.cv.birthDay.slice(0, 10)
             this.idUser = this.$route.params.id;
         })
+
+        var jwt = localStorage.getItem('jwt')
+
+        if (jwt != null) {
+            cvService.isGoodUser(this.$route.params.id, jwt).then(
+                (response) => {
+                    this.goodUser = response.data;
+                }
+            ).catch(
+                (error) => {
+                    this.goodUser = false;
+                }
+            )
+        }
     }
 }
 
 export const addActivity = {
     template: '<div>\n' +
-    '<table class="table table-striped">\n' +
-    '          <thead>\n' +
-    '          <tr>\n' +
-    '               <th>Title</th>\n' +
-    '               <th>Nature</th>\n' +
-    '               <th>Description</th>\n' +
-    '               <th>Year</th>\n' +
-    '               <th>Website</th>\n' +
-    '          </tr>\n' +
-    '          </thead>\n' +
-    '\n' +
-    '          <tbody>\n' +
-    '          <tr>\n' +
-    '               <td><input type="text" v-model="cv.title" /></td>\n' +
-    '               <td><input type="text" v-model="cv.nature"/></td>\n' +
-    '               <td><input type="text" v-model="cv.description"/></td>\n' +
-    '               <td><input type="text" v-model="cv.year"/></td>\n' +
-    '               <td><input type="text" v-model="cv.webSite"/></td>' +
-    '          </tr>\n' +
-    '          </tbody>\n' +
-    '          </table>\n' +
-    '          <button type="submit" v-on:click.prevent="goCvPage()">Valider Modification</button>' +
-    '</div>\n',
-    data(){
+        '<table class="table table-striped">\n' +
+        '          <thead>\n' +
+        '          <tr>\n' +
+        '               <th>Title</th>\n' +
+        '               <th>Nature</th>\n' +
+        '               <th>Description</th>\n' +
+        '               <th>Year</th>\n' +
+        '               <th>Website</th>\n' +
+        '          </tr>\n' +
+        '          </thead>\n' +
+        '\n' +
+        '          <tbody>\n' +
+        '          <tr>\n' +
+        '               <td><input type="text" v-model="cv.title" /></td>\n' +
+        '               <td><input type="text" v-model="cv.nature"/></td>\n' +
+        '               <td><input type="text" v-model="cv.description"/></td>\n' +
+        '               <td><input type="text" v-model="cv.year"/></td>\n' +
+        '               <td><input type="text" v-model="cv.webSite"/></td>' +
+        '          </tr>\n' +
+        '          </tbody>\n' +
+        '          </table>\n' +
+        '          <button type="submit" v-on:click.prevent="goCvPage()">Valider Modification</button>' +
+        '</div>\n',
+    data() {
         return {
             idUser: null,
             cv: {},
@@ -89,14 +148,43 @@ export const addActivity = {
         }
     },
     methods: {
-        goCvPage(){
+        goCvPage() {
             this.cv.user = this.user;
             this.cv.idActivity = -1;
             activityService.addActivity(this.cv);
-            this.$router.push('/cv/'+this.idUser);
+            this.$router.push('/cv/' + this.idUser);
         },
     },
-    created(){
+    created() {
+
+        var jwt = localStorage.getItem('jwt')
+        if (jwt != null) {
+            cvService.isConnected(jwt).then((response) => {
+                if (!response.data) {
+                    this.$router.push('/')
+                }
+                this.jwt = jwt
+            })
+        }
+        else {
+            this.$router.push('/')
+        }
+
+        if (jwt != null) {
+            cvService.isGoodUser(this.$route.params.id, jwt).then(
+                (response) => {
+                    if (!response.data) {
+                        this.$router.push('/')
+                    }
+                    this.goodUser = response.data;
+                }
+            ).catch(
+                (error) => {
+                    this.$router.push('/')
+                }
+            )
+        }
+
         cvService.getCvByUserId(this.$route.params.id).then((response) => {
             // alert('okok');
             this.idUser = this.$route.params.id;
@@ -106,57 +194,115 @@ export const addActivity = {
 }
 
 export const modifyCv = {
-    template: '<div>\n' +
-    '<table class="table table-striped">\n' +
-    '          <thead>\n' +
-    '          <tr>\n' +
-    '               <th>Title</th>\n' +
-    '               <th>Nature</th>\n' +
-    '               <th>Description</th>\n' +
-    '               <th>Year</th>\n' +
-    '               <th>Website</th>\n' +
-    '          </tr>\n' +
-    '          </thead>\n' +
-    '\n' +
-    '          <tbody>\n' +
-    '          <tr v-for="(item, index) in cv?.activities">\n' +
-    '               <td><input type="text" v-model="cv?.activities.at(index).title" /></td>\n' +
-    '               <td><input type="text" v-model="cv?.activities.at(index).nature"/></td>\n' +
-    '               <td><input type="text" v-model="cv?.activities.at(index).description"/></td>\n' +
-    '               <td><input type="text" v-model="cv?.activities.at(index).year"/></td>\n' +
-    '               <td><input type="text" v-model="cv?.activities.at(index).webSite"/></td>' +
-    '          </tr>\n' +
-    '          </tbody>\n' +
-    '          </table>\n' +
-    '          <p><label for="email">Email : </label><input type="text" v-model="mail" /></p>\n' +
-    '          <p><label for="webSite">Website : </label><input type="text" v-model="webSite"/></p>\n' +
-    '          <button type="submit" v-on:click.prevent="goCvPage()">Valider Modification</button>' +
-    '</div>\n',
-    data(){
+    template: '<div class="container-fluid px-1 py-5 mx-auto">\n' +
+        '    <div class="row d-flex justify-content-center">\n' +
+        '        <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">\n' +
+        '            <h3>Profile</h3>\n' +
+        '            <div class="card">\n' +
+        '                <form class="form-card">\n' +
+        '                    <div class="row justify-content-between text-left">\n' +
+        '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
+        '                            <label class="form-control-label px-3">First name</label>\n' +
+        '                            <input type="text" id="fname" name="fname" v-model="cv.firstname">\n' +
+        '                        </div>\n' +
+        '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
+        '                            <label class="form-control-label px-3">Lastname</label>\n' +
+        '                            <input type="text" id="lname" name="lname" v-model="cv.nom">\n' +
+        '                        </div>\n' +
+        '                    </div>\n' +
+        '                    <div class="row justify-content-between text-left">\n' +
+        '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
+        '                            <label class="form-control-label px-3">Email</label>\n' +
+        '                            <input type="email" id="email" name="email" v-model="cv.email">\n' +
+        '                        </div>\n' +
+        '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
+        '                            <label class="form-control-label px-3">WebSite</label>\n' +
+        '                            <input type="text" id="web" name="web" placeholder="Enter your website" v-model="cv.webSite">\n' +
+        '                        </div>\n' +
+        '                    </div>\n' +
+        '                    <div class="row justify-content-between text-left">\n' +
+        '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
+        '                            <label class="form-control-label px-3">BirthDay</label>\n' +
+        '                            <input type="date" id="date" name="date" v-model="cv.birthDay">\n' +
+        '                        </div>\n' +
+        '                    </div>\n' +
+        '                    <div class="row justify-content-between text-left">\n' +
+        '                        <div class="form-group col-12 flex-column d-flex">\n' +
+        '                            <table class="table table-striped">\n' +
+        '                                <thead>\n' +
+        '                                    <tr>\n' +
+        '                                        <th>Title</th>\n' +
+        '                                        <th>Nature</th>\n' +
+        '                                        <th>Description</th>\n' +
+        '                                        <th>Year</th>\n' +
+        '                                        <th>Website</th>\n' +
+        '                                    </tr>\n' +
+        '                                </thead>\n' +
+        '                                <tbody>\n' +
+        '                                    <tr v-for="(item, index) in cv?.activities">\n' +
+        '                                        <td><input type="text" v-model="cv?.activities.at(index).title" /></td>\n' +
+        '                                        <td><input type="text" v-model="cv?.activities.at(index).nature" /></td>\n' +
+        '                                        <td><input type="text" v-model="cv?.activities.at(index).description" /></td>\n' +
+        '                                        <td><input type="text" v-model="cv?.activities.at(index).year" /></td>\n' +
+        '                                        <td><input type="text" v-model="cv?.activities.at(index).webSite" /></td>\n' +
+        '                                    </tr>\n' +
+        '                                </tbody>\n' +
+        '                            </table>\n' +
+        '                        </div>\n' +
+        '                    </div>\n' +
+        '                    <button type="submit" v-on:click.prevent="goCvPage()">Save</button>\n' +
+        '                </form>\n' +
+        '            </div>\n' +
+        '        </div>\n' +
+        '    </div>\n' +
+        '</div>',
+    data() {
         return {
             idUser: null,
             cv: null,
-            mail:null,
-            webSite: null,
         }
     },
     methods: {
-        goCvPage(){
-            // alert(this.cv.activities.at(0).title);
-            for(let i=0; i<this.cv.activities.length; i++){
-                // const movie = {name: "movie" + i, year: 1999 + i, description: "tu connais " + i}
+        goCvPage() {
+            for (let i = 0; i < this.cv.activities.length; i++) {
                 activityService.updateActivity(this.cv.activities.at(i));
             }
-            // TODO : verify if exists or not.
-            this.cv.email = this.mail;
-            this.cv.webSite = this.webSite;
+            console.log(this.cv.email)
             var jwt = localStorage.getItem('jwt');
             cvService.updateUser(this.cv, jwt);
-            // this.$router.go(-1) : this.$router.push('/')
-            this.$router.push('/cv/'+this.idUser);
+            this.$router.push('/cv/' + this.idUser);
         },
     },
-    created(){
+    created() {
+
+        var jwt = localStorage.getItem('jwt')
+        if (jwt != null) {
+            cvService.isConnected(jwt).then((response) => {
+                if (!response.data) {
+                    this.$router.push('/')
+                }
+                this.jwt = jwt
+            })
+        }
+        else {
+            this.$router.push('/')
+        }
+
+        if (jwt != null) {
+            cvService.isGoodUser(this.$route.params.id, jwt).then(
+                (response) => {
+                    if (!response.data) {
+                        this.$router.push('/')
+                    }
+                    this.goodUser = response.data;
+                }
+            ).catch(
+                (error) => {
+                    this.$router.push('/')
+                }
+            )
+        }
+
         cvService.getCvByUserId(this.$route.params.id).then((response) => {
             // alert('okok');
             this.idUser = this.$route.params.id;

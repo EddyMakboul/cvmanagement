@@ -45,7 +45,6 @@ public class UserController {
 	public ResponseEntity<Integer> getDataSize(@RequestParam(defaultValue = "") String criteria) {
 
 		final Integer size = userService.getDataSize(criteria);
-
 		return new ResponseEntity<>(size, HttpStatus.OK);
 	}
 
@@ -54,7 +53,6 @@ public class UserController {
 			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "15") Integer pageSize) {
 
 		final List<cvDTO> usersDTO = userService.searchUsers(criteria, pageNo, pageSize);
-
 		return new ResponseEntity<>(usersDTO, HttpStatus.OK);
 
 	}
@@ -62,7 +60,7 @@ public class UserController {
 	@GetMapping("/{id}")
 	public ResponseEntity<cvDTO> getcvDTO(@PathVariable Long id) {
 
-		final cvDTO cvDTO = userService.findById(id);
+		final cvDTO cvDTO = userService.findByIdDTO(id);
 
 		return new ResponseEntity<>(cvDTO, HttpStatus.OK);
 	}
@@ -94,7 +92,6 @@ public class UserController {
 	@PutMapping()
 	public ResponseEntity<cvDTO> updateUser(HttpServletRequest req, @RequestBody cvDTO cv) {
 		try {
-			// provider.tokenExist(provider.resolveToken(req));
 			final cvDTO cvDTO = userService.updateUser(req, cv);
 			return new ResponseEntity<>(cvDTO, HttpStatus.OK);
 
@@ -133,5 +130,16 @@ public class UserController {
 		}
 		return new ResponseEntity<>(false, HttpStatus.OK);
 
+	}
+
+	@GetMapping("/isGoodUser")
+	public ResponseEntity<Boolean> isGoodUser(HttpServletRequest req, @RequestParam Long userId) {
+		final User user = userService.findByJwt(provider.resolveToken(req));
+		final User user2 = userService.findById(userId);
+
+		if (user != null && user2 != null && user.getEmail().equals(user2.getEmail())) {
+			return new ResponseEntity<>(true, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(false, HttpStatus.OK);
 	}
 }

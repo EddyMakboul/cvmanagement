@@ -1,25 +1,64 @@
-'<div id="card-container">\n' +
-    ' <div class="row justify-content-center mt-lg-3 mt-2 gx-lg-1 px-4 px-lg-0">\n' +
-        ' <div v-for="cv in cvs" \n'
-            + '            class="card col-xl-3 col-md-5 col-sm-8 mx-lg-3 mx-2 my-lg-4 my-sm-3 my-2 shadow border-0 h-auto">\n'
-            + '            <div class="card-body">\n'
-            + '                <div class="card-title row justify-content-between d-flex align-items-center">\n'
-            + '                    <h5 class="fs-5 col-auto mb-0">{{cv.nom}} {{cv.firstname}}</h5>\n'
-            + '                </div>\n'
-            + '                <h6 class="card-subtitle fs-6 mb-2 text-muted">{{employe?.role?.nom_role}}</h6>\n'
-            + '                <div id="skills-section" class="row justify-content-start mt-lg-2">\n'
-            + '                    <div v-for="activity in cv.activities" class="col-auto mx-lg-2 mx-1 my-lg-2 px-0">\n'
-            + '                        <span *ngIf="comp.niveau === Moyen'" class=" badge bg-pastel-blue p-2">
-            {{activity.nature}}\n' +
-            ' </span>\n' +
+'<div class="container-fluid px-1 py-5 mx-auto">\n' +
+    ' <div class="row d-flex justify-content-center">\n' +
+        ' <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">\n' +
+            ' <h3>Profile</h3>\n' +
+            ' <div class="card">\n' +
+                ' <form class="form-card">\n' +
+                    ' <div class="row justify-content-between text-left">\n' +
+                        ' <div class="form-group col-sm-6 flex-column d-flex">\n' +
+                            ' <label class="form-control-label px-3">First name</label>\n' +
+                            ' <input type="text" id="fname" name="fname" v-model="cv.firstname">\n' +
+                            ' </div>\n' +
+                        ' <div class="form-group col-sm-6 flex-column d-flex">\n' +
+                            ' <label class="form-control-label px-3">Lastname</label>\n' +
+                            ' <input type="text" id="lname" name="lname" v-model="cv.nom">\n' +
+                            ' </div>\n' +
+                        ' </div>\n' +
+                    ' <div class="row justify-content-between text-left">\n' +
+                        ' <div class="form-group col-sm-6 flex-column d-flex">\n' +
+                            ' <label class="form-control-label px-3">Email</label>\n' +
+                            ' <input type="email" id="email" name="email" v-model="cv.email">\n' +
+                            ' </div>\n' +
+                        ' <div class="form-group col-sm-6 flex-column d-flex">\n' +
+                            ' <label class="form-control-label px-3">WebSite</label>\n' +
+                            ' <input type="text" id="web" name="web" placeholder="Enter your website"
+                                v-model="cv.webSite">\n' +
+                            ' </div>\n' +
+                        ' </div>\n' +
+                    ' <div class="row justify-content-between text-left">\n' +
+                        ' <div class="form-group col-sm-6 flex-column d-flex">\n' +
+                            ' <label class="form-control-label px-3">BirthDay</label>\n' +
+                            ' <input type="date" id="date" name="date" v-model="cv.birthDay">\n' +
+                            ' </div>\n' +
+                        ' </div>\n' +
+                    ' <div class="row justify-content-between text-left">\n' +
+                        ' <div class="form-group col-12 flex-column d-flex">\n' +
+                            ' <table class="table table-striped">\n' +
+                                ' <thead>\n' +
+                                    ' <tr>\n' +
+                                        ' <th>Title</th>\n' +
+                                        ' <th>Nature</th>\n' +
+                                        ' <th>Description</th>\n' +
+                                        ' <th>Year</th>\n' +
+                                        ' <th>Website</th>\n' +
+                                        ' </tr>\n' +
+                                    ' </thead>\n' +
+                                ' <tbody>\n' +
+                                    ' <tr v-for="(item, index) in cv?.activities">\n' +
+                                        ' <td><input type="text" v-model="cv?.activities.at(index).title" /></td>\n' +
+                                        ' <td><input type="text" v-model="cv?.activities.at(index).nature" /></td>\n' +
+                                        ' <td><input type="text" v-model="cv?.activities.at(index).description" /></td>
+                                        \n' +
+                                        ' <td><input type="text" v-model="cv?.activities.at(index).year" /></td>\n' +
+                                        ' <td><input type="text" v-model="cv?.activities.at(index).webSite" /></td>\n' +
+                                        ' </tr>\n' +
+                                    ' </tbody>\n' +
+                                ' </table>\n' +
+                            ' </div>\n' +
+                        ' </div>\n' +
+                    ' <button type="submit" v-on:click.prevent="goCvPage()">Save</button>\n' +
+                    ' </form>\n' +
+                ' </div>\n' +
             ' </div>\n' +
         ' </div>\n' +
-    ' \n' +
-    ' </div>\n' +
-' </div>\n' +
-' </div>\n' +
-'</div>'
-
-<router-link :to="\'/cv/\'+ cv.idUser">show</router-link>
-
-<router-link class="btn btn-outline-danger mt-3 col-12" :to="\'/cv/\'+ cv.idUser">Show Cv</router-link>
+    '</div>\n' +

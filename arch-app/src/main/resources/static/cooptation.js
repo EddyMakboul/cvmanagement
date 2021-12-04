@@ -1,4 +1,4 @@
-import { cvService } from './app.js'
+import { cvService } from './CvService.js'
 const userModel = {
     nom: null,
     firstname: null,

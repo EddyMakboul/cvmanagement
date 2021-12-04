@@ -37,10 +37,18 @@ public class UserService {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
-	public cvDTO findById(Long id) {
+	public cvDTO findByIdDTO(Long id) {
 		final ModelMapper modelMapper = new ModelMapper();
 		final User cv = userRepo.findById(id).get();
 		return modelMapper.map(cv, cvDTO.class);
+	}
+
+	public User findById(Long id) {
+		return userRepo.findById(id).get();
+	}
+
+	public User findByJwt(String jwtToken) {
+		return userRepo.findUserByJwt(jwtToken);
 	}
 
 	public String login(String email, String password) {
@@ -69,7 +77,7 @@ public class UserService {
 	}
 
 	public cvDTO updateUser(HttpServletRequest req, cvDTO cv) {
-		User user = whoami(req);
+		final User user = whoami(req);
 		user.setEmail(cv.getEmail());
 		user.setWebSite(cv.getWebSite());
 		userRepo.save(user);

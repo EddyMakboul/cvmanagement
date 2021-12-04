@@ -1,6 +1,7 @@
 import { cv } from './cv.js'
 import { modifyCv } from './cv.js'
 import { addActivity } from './cv.js'
+import { cvService } from './CvService.js'
 
 import { Login } from './login.js'
 import { Cooptation } from './cooptation.js'
@@ -10,39 +11,7 @@ axios = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-class CvService {
 
-  getCvByUserId(id) {
-    return axios.get('/users/' + id)
-  }
-
-  postLogin(email, password) {
-    return axios.post('/users/signin?email=' + email + '&password=' + password)
-  }
-
-  isConnected(jwt) {
-    return axios.get('/users/isconnected', { headers: { Authorization: 'Bearer ' + jwt } })
-  }
-
-  logout(jwt) {
-    return axios.get('/users/logout', { headers: { Authorization: 'Bearer ' + jwt } })
-  }
-
-  searchCvByCriteria(criteria, pageNo, pageSize) {
-    return axios.get('/users/search', { params: { criteria: criteria, pageNo: pageNo, pageSize: pageSize } })
-  }
-
-  size(criteria) {
-    return axios.get('/users/size', { params: { criteria: criteria } })
-  }
-
-  updateUser(userdto, jwt) {
-    return axios.put('/users', userdto, { headers: { Authorization: 'Bearer ' + jwt } });
-  }
-  createUser(user, jwt) {
-    return axios.post('/users', user, { headers: { Authorization: 'Bearer ' + jwt } })
-  }
-}
 
 class ActivityService {
   updateActivity(activity) {
@@ -60,7 +29,6 @@ class ActivityService {
 }
 
 
-export const cvService = new CvService();
 export const activityService = new ActivityService();
 
 const allCv = {
