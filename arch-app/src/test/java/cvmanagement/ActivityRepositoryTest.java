@@ -45,11 +45,29 @@ class ActivityRepositoryTest {
 		Activity activity1 = new Activity(1999, "expérience", "title");
 		activity1 = activityRepository.save(activity1);
 		assertEquals(activity1.getNature(), activityRepository.findById(activity1.getIdActivity()).get().getNature());
+
 		Random rnd = new Random();
 		String newTitle = "new" + (rnd.nextInt()*100) +"Title";
 		activity1.setTitle(newTitle);
 		activity1 = activityRepository.save(activity1);
 		assertEquals(newTitle, activityRepository.findById(activity1.getIdActivity()).get().getTitle());
+		activityRepository.delete(activity1);
+	}
+
+	@Test
+	@DisplayName("Test de la mise à jour d'une activité avec des données incorrecte.")
+	void testUpdateActivityAfterSaveWithIncorrectDataThrowException() {
+		Activity activity1 = new Activity(1999, "expérience", "title");
+		activity1 = activityRepository.save(activity1);
+		assertEquals(activity1.getNature(), activityRepository.findById(activity1.getIdActivity()).get().getNature());
+
+		activity1.setTitle(null);
+		final Activity activity2 = activity1;
+		assertThrows(DataIntegrityViolationException.class, ()->{
+			activityRepository.save(activity2);
+		});
+
+		activityRepository.delete(activity1);
 	}
 
 }

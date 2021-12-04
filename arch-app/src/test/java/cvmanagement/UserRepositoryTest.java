@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,12 +28,13 @@ class UserRepositoryTest {
 	UserRepository userRepo;
 
 	@Test
+	@Transactional
 	@DisplayName("Test de la sauvegarde d'un utilisateur.")
 	void testSaveUser() {
 		User user1 = new User("name1", "firstName1", "email1", new Date(), "pwd1");
 		user1 = userRepo.save(user1);
-
 		assertEquals(user1.getNom(), userRepo.findById(user1.getidUser()).get().getNom());
+		assertEquals(0, userRepo.findById(user1.getidUser()).get().getActivities().size());
 
 		userRepo.delete(user1);
 	}
@@ -67,6 +70,7 @@ class UserRepositoryTest {
 
 		assertEquals(user1.getNom(), userRepo.findById(user1.getidUser()).get().getNom());
 		user1.setNom(null);
+		user1.setEmail(null);
 		final User newUser = user1;
 		assertThrows(DataIntegrityViolationException.class, ()->{
 			userRepo.save(newUser);
