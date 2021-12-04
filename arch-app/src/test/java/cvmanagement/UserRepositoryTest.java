@@ -16,18 +16,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import cvmanagement.entities.User;
-import cvmanagement.repositories.ActivityRepository;
 import cvmanagement.repositories.UserRepository;
 
 @SpringBootTest
-@DisplayName("Test sur les fonctionnalités liés au Repository de l'application")
-class RepositoryTest {
+@DisplayName("Test sur les fonctionnalités liés au Repository User de l'application")
+class UserRepositoryTest {
 
 	@Autowired
 	UserRepository userRepo;
-
-	@Autowired
-	ActivityRepository activityRepo;
 
 	@Test
 	@DisplayName("Test de la sauvegarde d'un utilisateur.")
