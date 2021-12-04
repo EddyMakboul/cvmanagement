@@ -1,6 +1,7 @@
 package cvmanagement;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
@@ -68,7 +69,7 @@ class UserServiceTest {
 	@DisplayName("Test du login du service.")
 	void testLogin() {
 		final String password = passwordEncoder.encode("password");
-		User user1 = new User("name1", "firstName1", "email1", new Date(), password);
+		User user1 = new User("name1", "firstName1", "email1@", new Date(), password);
 		user1 = userRepository.save(user1);
 
 		String jwtToken = userService.login(user1.getEmail(), "password");
@@ -87,7 +88,7 @@ class UserServiceTest {
 	@Test
 	@DisplayName("Test des exceptions du login.")
 	void testLoginWithBadPassword() {
-		User user1 = new User("name1", "firstName1", "email1", new Date(), "pwd1");
+		User user1 = new User("name1", "firstName1", "email1@", new Date(), "pwd1");
 		user1 = userRepository.save(user1);
 
 		final String mailUser1 = user1.getEmail();
@@ -102,7 +103,7 @@ class UserServiceTest {
 	@DisplayName("Test du logout du service.")
 	void testLogout() {
 		final String password = passwordEncoder.encode("password");
-		User user1 = new User("name1", "firstName1", "email1", new Date(), password);
+		User user1 = new User("name1", "firstName1", "email1@", new Date(), password);
 		user1 = userRepository.save(user1);
 
 		String jwtToken = userService.login(user1.getEmail(), "password");
@@ -117,7 +118,7 @@ class UserServiceTest {
 	@Test
 	@DisplayName("Test de l'exception du logout quand le user est null.")
 	void testLogoutWithUserNull() {
-		User user1 = new User("name1", "firstName1", "email1", new Date(), "pwd1");
+		User user1 = new User("name1", "firstName1", "email1@", new Date(), "pwd1");
 		user1 = userRepository.save(user1);
 		final User user2 = user1;
 		user2.setEmail("");
@@ -126,6 +127,26 @@ class UserServiceTest {
 		});
 
 		userRepository.delete(user1);
+	}
+
+	@Test
+	@DisplayName("Test de l'enregistrement d'un utilisateur.")
+	void testSignUp() {
+		User user1 = new User("name1", "firstName1", "email1@", new Date(), "pwd1");
+		userService.signup(user1);
+		assertNotEquals("pwd1", userRepository.findUserByEmail(user1.getEmail()).getPassword());
+		userRepository.delete(userRepository.findUserByEmail(user1.getEmail()));
+	}
+
+	@Test
+	@DisplayName("Test de l'exception du signin quand le username existe déjà.")
+	void testSignUpWhenUsernameAlreadyExistThrowException() {
+		User user1 = new User("name1", "firstName1", "email1", new Date(), "pwd1");
+		user1 = userRepository.save(user1);
+		final User user2 = user1;
+		assertThrows(CustomException.class, ()->{
+			userService.signup(user2);
+		});
 	}
 
 }
