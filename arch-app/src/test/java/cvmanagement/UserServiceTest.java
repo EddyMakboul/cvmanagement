@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -147,6 +148,32 @@ class UserServiceTest {
 		assertThrows(CustomException.class, ()->{
 			userService.signup(user2);
 		});
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"email1", "Christophe", "Jean"})
+	@DisplayName("Test de la recherche d'un utilisateur en fonction d'un critère.")
+	@Transactional
+	void testSearchUsers(String criteria) {
+		User user1 = new User("name1", "firstName1", criteria+"@", new Date(), "pwd1");
+		user1 = userRepository.save(user1);
+
+		List<cvDTO> listUser = userService.searchUsers(criteria, 0, 15);
+		assertTrue(listUser.size() >=1);
+
+		userRepository.delete(user1);
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"email1", "Christophe", "Jean"})
+	@DisplayName("Test de la récupération du nombre d'utilisateur correspondant à un critère.")
+	@Transactional
+	void testGetDataSize(String criteria) {
+		User user1 = new User("name1", "firstName1", criteria+"@", new Date(), "pwd1");
+		user1 = userRepository.save(user1);
+
+		assertTrue(userService.getDataSize(criteria)>=1);
+		userRepository.delete(user1);
 	}
 
 }
