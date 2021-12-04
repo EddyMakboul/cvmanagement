@@ -54,7 +54,7 @@ export const cv = {
         '                                        <td> {{cv?.year}}</td>\n' +
         '                                        <td> {{cv?.webSite}}</td>\n' +
         '                                        <div v-if="goodUser">\n' +
-        '                                            <td><button v-on:click.prevent="deleteActivity(idUser)">Supprimer</button>\n' +
+        '                                            <td><button class="btn btn-danger" v-on:click.prevent="deleteActivity(idUser)">Supprimer</button>\n' +
         '                                            </td>\n' +
         '                                        </div>\n' +
         '                                    </tr>\n' +
@@ -64,8 +64,8 @@ export const cv = {
         '                    </div>\n' +
         '                </form>\n' +
         '                <div v-if="goodUser">\n' +
-        '                    <router-link :to="\'/cv/\'+ idUser + \'/add\'">Ajouter une activité</router-link>\n' +
-        '                    <router-link :to="\'/cv/\'+ idUser + \'/modify\'">Modifier</router-link>\n' +
+        '                    <button class="btn btn-primary"> <router-link  class="link-a" :to="\'/cv/\'+ idUser + \'/add\'">Ajouter une activité</router-link> </button>\n' +
+        '                    <button class="btn btn-primary"> <router-link class="link-a" :to="\'/cv/\'+ idUser + \'/modify\'">Modifier</router-link> </button>\n' +
         '                </div>\n' +
         '            </div>\n' +
         '        </div>\n' +
@@ -138,7 +138,8 @@ export const addActivity = {
         '          </tr>\n' +
         '          </tbody>\n' +
         '          </table>\n' +
-        '          <button type="submit" v-on:click.prevent="goCvPage()">Valider Modification</button>' +
+        '          <button class="btn btn-primary" type="submit" v-on:click.prevent="goCvPage()">Save</button>\n ' +
+        '          <button class="btn btn-danger" type="submit" v-on:click.prevent="cancel()">abort</button>\n ' +
         '</div>\n',
     data() {
         return {
@@ -154,6 +155,9 @@ export const addActivity = {
             activityService.addActivity(this.cv);
             this.$router.push('/cv/' + this.idUser);
         },
+        cancel() {
+            this.$router.push('/cv/' + this.idUser);
+        }
     },
     created() {
 
@@ -186,7 +190,6 @@ export const addActivity = {
         }
 
         cvService.getCvByUserId(this.$route.params.id).then((response) => {
-            // alert('okok');
             this.idUser = this.$route.params.id;
             this.user = response.data;
         })
@@ -196,24 +199,33 @@ export const addActivity = {
 export const modifyCv = {
     template: '<div class="container-fluid px-1 py-5 mx-auto">\n' +
         '    <div class="row d-flex justify-content-center">\n' +
-        '        <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">\n' +
-        '            <h3>Profile</h3>\n' +
+        '        <div class=" text-center">\n' +
+        '            <h3>Update Profile</h3>\n' +
         '            <div class="card">\n' +
         '                <form class="form-card">\n' +
         '                    <div class="row justify-content-between text-left">\n' +
         '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
         '                            <label class="form-control-label px-3">First name</label>\n' +
         '                            <input type="text" id="fname" name="fname" v-model="cv.firstname">\n' +
+        '                              <div v-if="(errors?.firstname)" class="alert alert-warning">\n' +
+        '                                   {{errors?.firstname}}\n' +
+        '                              </div>\n' +
         '                        </div>\n' +
         '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
         '                            <label class="form-control-label px-3">Lastname</label>\n' +
         '                            <input type="text" id="lname" name="lname" v-model="cv.nom">\n' +
+        '                              <div v-if="(errors?.nom)" class="alert alert-warning">\n' +
+        '                                   {{errors?.nom}}\n' +
+        '                              </div>\n' +
         '                        </div>\n' +
         '                    </div>\n' +
         '                    <div class="row justify-content-between text-left">\n' +
         '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
         '                            <label class="form-control-label px-3">Email</label>\n' +
         '                            <input type="email" id="email" name="email" v-model="cv.email">\n' +
+        '                              <div v-if="(errors?.email)" class="alert alert-warning">\n' +
+        '                                   {{errors?.email}}\n' +
+        '                              </div>\n' +
         '                        </div>\n' +
         '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
         '                            <label class="form-control-label px-3">WebSite</label>\n' +
@@ -224,6 +236,9 @@ export const modifyCv = {
         '                        <div class="form-group col-sm-6 flex-column d-flex">\n' +
         '                            <label class="form-control-label px-3">BirthDay</label>\n' +
         '                            <input type="date" id="date" name="date" v-model="cv.birthDay">\n' +
+        '                              <div v-if="(errors?.birthDay)" class="alert alert-warning">\n' +
+        '                                   {{errors?.birthDay}}\n' +
+        '                              </div>\n' +
         '                        </div>\n' +
         '                    </div>\n' +
         '                    <div class="row justify-content-between text-left">\n' +
@@ -250,7 +265,8 @@ export const modifyCv = {
         '                            </table>\n' +
         '                        </div>\n' +
         '                    </div>\n' +
-        '                    <button type="submit" v-on:click.prevent="goCvPage()">Save</button>\n' +
+        '                    <button class="btn btn-primary" type="submit" v-on:click.prevent="goCvPage()">Save</button>\n' +
+        '                    <button class="btn btn-danger" type="submit" v-on:click.prevent="cancel()">abort</button>\n ' +
         '                </form>\n' +
         '            </div>\n' +
         '        </div>\n' +
@@ -260,18 +276,27 @@ export const modifyCv = {
         return {
             idUser: null,
             cv: null,
+            errors: [],
         }
     },
     methods: {
         goCvPage() {
+            this.errors = null;
             for (let i = 0; i < this.cv.activities.length; i++) {
                 activityService.updateActivity(this.cv.activities.at(i));
             }
-            console.log(this.cv.email)
             var jwt = localStorage.getItem('jwt');
-            cvService.updateUser(this.cv, jwt);
-            this.$router.push('/cv/' + this.idUser);
+            cvService.updateUser(this.cv, jwt).then((response) => {
+                localStorage.setItem('jwt', response.data.jwt);
+                this.$router.push('/cv/' + this.idUser);
+            }).catch((error) => {
+                this.errors = error.response.data;
+            });
+
         },
+        cancel() {
+            this.$router.push('/cv/' + this.idUser);
+        }
     },
     created() {
 
@@ -304,11 +329,9 @@ export const modifyCv = {
         }
 
         cvService.getCvByUserId(this.$route.params.id).then((response) => {
-            // alert('okok');
             this.idUser = this.$route.params.id;
             this.cv = response.data;
-            this.mail = this.cv.email;
-            this.webSite = this.cv.webSite;
+            this.cv.birthDay = this.cv.birthDay.slice(0, 10)
         })
     },
 }

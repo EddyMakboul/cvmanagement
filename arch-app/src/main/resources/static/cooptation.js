@@ -79,8 +79,6 @@ export const Cooptation = {
             cvService.createUser(this.user, this.jwt).then((response) => {
                 this.$router.push('/')
             }).catch((error) => {
-                console.log(error)
-                console.log(error.response.data)
                 this.errors = error.response.data
             })
         }

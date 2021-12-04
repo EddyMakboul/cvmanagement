@@ -122,6 +122,17 @@ const allCv = {
     cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
       this.cvs = response.data;
     })
+    var jwt = localStorage.getItem('jwt')
+    if (jwt != null) {
+      cvService.isConnected(jwt).then((response) => {
+        if (!response.data) {
+          this.localStorage.removeItem('jwt');
+        }
+      })
+    }
+    else {
+      this.localStorage.removeItem('jwt');
+    }
 
     this.getSize();
 

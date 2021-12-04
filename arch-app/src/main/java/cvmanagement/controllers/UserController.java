@@ -90,14 +90,30 @@ public class UserController {
 	}
 
 	@PutMapping()
-	public ResponseEntity<cvDTO> updateUser(HttpServletRequest req, @RequestBody cvDTO cv) {
-		try {
-			final cvDTO cvDTO = userService.updateUser(req, cv);
-			return new ResponseEntity<>(cvDTO, HttpStatus.OK);
+	public ResponseEntity<Map<String, String>> updateUser(HttpServletRequest req, @RequestBody UserDTO user) {
+		final Set<ConstraintViolation<UserDTO>> constraints = validators.validate(user);
 
-		} catch (final Exception e) {
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		final Map<String, String> errors = new HashMap<>();
+
+		for (final ConstraintViolation<UserDTO> constraint : constraints) {
+			errors.put(constraint.getPropertyPath().toString(), constraint.getMessage());
 		}
+
+		errors.remove("password");
+
+		if (errors.isEmpty()) {
+
+			try {
+				final String jwt = userService.updateUser(req, user);
+
+				errors.put("jwt", jwt);
+				return new ResponseEntity<>(errors, HttpStatus.OK);
+
+			} catch (final Exception e) {
+				return new ResponseEntity<>(HttpStatus.CONFLICT);
+			}
+		}
+		return new ResponseEntity<>(errors, HttpStatus.CONFLICT);
 
 	}
 

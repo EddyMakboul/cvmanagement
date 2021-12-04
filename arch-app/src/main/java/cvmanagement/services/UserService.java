@@ -76,13 +76,18 @@ public class UserService {
 		userRepo.save(user);
 	}
 
-	public cvDTO updateUser(HttpServletRequest req, cvDTO cv) {
+	public String updateUser(HttpServletRequest req, UserDTO cv) {
 		final User user = whoami(req);
 		user.setEmail(cv.getEmail());
 		user.setWebSite(cv.getWebSite());
+		user.setNom(cv.getNom());
+		user.setFirstname(cv.getFirstname());
+		user.setBirthDay(cv.getBirthDay());
+		final String jwt = refresh(user.getEmail());
+		user.setJwtToken(jwt);
 		userRepo.save(user);
-		final ModelMapper modelMapper = new ModelMapper();
-		return modelMapper.map(user, cvDTO.class);
+		return jwt;
+
 	}
 
 	public User whoami(HttpServletRequest req) {
@@ -121,5 +126,9 @@ public class UserService {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		userRepo.save(user);
 
+	}
+
+	public String refresh(String email) {
+		return jwtTokenProvider.createToken(email);
 	}
 }
