@@ -53,7 +53,7 @@ const allCv = {
       page: 0,
       size: 15,
       cvFilter: '',
-      pageMax: 0,
+      pageMax: 10,
     }
   },
   methods: {

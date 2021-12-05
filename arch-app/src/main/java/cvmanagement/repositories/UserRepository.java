@@ -1,7 +1,7 @@
 package cvmanagement.repositories;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	boolean existsByJwtToken(String token);
 
 	@Query("Select distinct u from User u Left Join Activity a on u.idUser = a.user.idUser where u.email like %:criteria% OR u.nom like %:criteria% OR u.firstname like %:criteria% OR a.title like %:criteria% ")
-	Page<User> SearchUserByCriteria(@Param("criteria") String criteria, Pageable pageable);
+	Slice<User> SearchUserByCriteria(@Param("criteria") String criteria, Pageable pageable);
 
 	@Query("Select distinct count(u) from User u Left Join Activity a on u.idUser = a.user.idUser where u.email like %:criteria% OR u.nom like %:criteria% OR u.firstname like %:criteria% OR a.title like %:criteria%")
 	Integer sizeOfUser(String criteria);

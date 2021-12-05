@@ -8,7 +8,7 @@
 	<version>0.2-SNAPSHOT</version>
 	<name>archApp</name>
 	<description>Demo project for Spring Boot Web Application</description>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

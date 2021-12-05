@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -96,10 +96,7 @@ public class UserService {
 
 	public List<cvDTO> searchUsers(String criteria, Integer pageNo, Integer pageSize) {
 		final Pageable page = PageRequest.of(pageNo, pageSize);
-
-		final Page<User> pageResult = userRepo.SearchUserByCriteria(criteria, page);
-
-		userRepo.findAll();
+		final Slice<User> pageResult = userRepo.SearchUserByCriteria(criteria, page);
 		final List<cvDTO> cvDtos = new ArrayList<>();
 		final ModelMapper modelMapper = new ModelMapper();
 
