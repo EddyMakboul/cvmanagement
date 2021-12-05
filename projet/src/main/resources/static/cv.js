@@ -83,7 +83,8 @@ export const cv = {
         deleteActivity(idActivity) {
             var resultat = confirm("Voulez-vous vraiment supprimer cette activité ?");
             if (resultat == true) {
-                activityService.removeActivity(idActivity).then((response) => {
+                var jwt = localStorage.getItem('jwt')
+                activityService.removeActivity(idActivity, jwt).then((response) => {
                     cvService.getCvByUserId(this.idUser).then((response) => {
                         this.cv = response.data;
                         this.idUser = this.$route.params.id;
@@ -174,7 +175,8 @@ export const addActivity = {
     methods: {
         goCvPage() {
             this.activity.user = this.user;
-            activityService.addActivity(this.activity).then((response) => {
+            var jwt = localStorage.getItem('jwt')
+            activityService.addActivity(this.activity, jwt).then((response) => {
                 this.$router.push('/cv/' + this.idUser);
             }).catch((error) => {
                 this.errors = error.response.data;
@@ -308,8 +310,9 @@ export const modifyCv = {
     methods: {
         goCvPage() {
             this.errors = null;
+            var jwt = localStorage.getItem('jwt')
             for (let i = 0; i < this.cv.activities.length; i++) {
-                activityService.updateActivity(this.cv.activities.at(i));
+                activityService.updateActivity(this.cv.activities.at(i), jwt);
             }
             var jwt = localStorage.getItem('jwt');
             cvService.updateUser(this.cv, jwt).then((response) => {
