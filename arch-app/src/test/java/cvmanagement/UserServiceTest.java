@@ -16,10 +16,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import cvmanagement.DTO.UserDTO;
 import cvmanagement.DTO.cvDTO;
 import cvmanagement.entities.User;
 import cvmanagement.exception.CustomException;
@@ -41,16 +43,14 @@ class UserServiceTest {
 
 	@ParameterizedTest
 	@Transactional
-	@CsvSource({
-		"0,15", "0,60", "0, 35", "1,1"
-	})
+	@CsvSource({ "0,15", "0,60", "0, 35", "1,1" })
 	@DisplayName("Test de récupéreration de tous les utilisateurs par ensemble.")
 	void testGetAllUsers(int pageNo, int pageSize) {
 		User user1 = new User("name1", "firstName1", "email1", new Date(), "pwd1");
 		user1 = userRepository.save(user1);
 
-		List<cvDTO> listUser = userService.getAllUsers(pageNo, pageSize);
-		assertTrue((listUser.size()>0) && (listUser.size()<=pageSize));
+		final List<cvDTO> listUser = userService.searchUsers("", pageNo, pageSize);
+		assertTrue((listUser.size() > 0) && (listUser.size() <= pageSize));
 		userRepository.delete(user1);
 	}
 
@@ -61,7 +61,7 @@ class UserServiceTest {
 		User user1 = new User("name1", "firstName1", "email1", new Date(), "pwd1");
 		user1 = userRepository.save(user1);
 
-		cvDTO cv = userService.findById(user1.getidUser());
+		final User cv = userService.findById(user1.getidUser());
 		assertEquals(user1.getNom(), cv.getNom());
 		assertEquals(user1.getFirstname(), cv.getFirstname());
 	}
@@ -73,7 +73,7 @@ class UserServiceTest {
 		User user1 = new User("name1", "firstName1", "email1@", new Date(), password);
 		user1 = userRepository.save(user1);
 
-		String jwtToken = userService.login(user1.getEmail(), "password");
+		final String jwtToken = userService.login(user1.getEmail(), "password");
 		assertEquals(jwtToken, userRepository.findById(user1.getidUser()).get().getJwtToken());
 		userRepository.delete(user1);
 	}
@@ -81,7 +81,7 @@ class UserServiceTest {
 	@Test
 	@DisplayName("Test des exceptions du login.")
 	void testLoginWithNullUser() {
-		assertThrows(CustomException.class, ()->{
+		assertThrows(CustomException.class, () -> {
 			userService.login(null, "password");
 		});
 	}
@@ -94,7 +94,7 @@ class UserServiceTest {
 
 		final String mailUser1 = user1.getEmail();
 		final String pwdUser1 = user1.getPassword();
-		assertThrows(CustomException.class, ()->{
+		assertThrows(CustomException.class, () -> {
 			userService.login(mailUser1, pwdUser1);
 		});
 		userRepository.delete(user1);
@@ -107,7 +107,7 @@ class UserServiceTest {
 		User user1 = new User("name1", "firstName1", "email1@", new Date(), password);
 		user1 = userRepository.save(user1);
 
-		String jwtToken = userService.login(user1.getEmail(), "password");
+		final String jwtToken = userService.login(user1.getEmail(), "password");
 		assertEquals(jwtToken, userRepository.findById(user1.getidUser()).get().getJwtToken());
 
 		userService.logout(user1);
@@ -123,7 +123,7 @@ class UserServiceTest {
 		user1 = userRepository.save(user1);
 		final User user2 = user1;
 		user2.setEmail("");
-		assertThrows(CustomException.class, ()->{
+		assertThrows(CustomException.class, () -> {
 			userService.logout(user2);
 		});
 
@@ -133,8 +133,8 @@ class UserServiceTest {
 	@Test
 	@DisplayName("Test de l'enregistrement d'un utilisateur.")
 	void testSignUp() {
-		User user1 = new User("name1", "firstName1", "email1@", new Date(), "pwd1");
-		userService.signup(user1);
+		final UserDTO user1 = new UserDTO("name1", "firstName1", "email1@", new Date(), "pwd1");
+		userService.createUser(user1);
 		assertNotEquals("pwd1", userRepository.findUserByEmail(user1.getEmail()).getPassword());
 		userRepository.delete(userRepository.findUserByEmail(user1.getEmail()));
 	}
@@ -144,54 +144,37 @@ class UserServiceTest {
 	void testSignUpWhenUsernameAlreadyExistThrowException() {
 		User user1 = new User("name1", "firstName1", "email1", new Date(), "pwd1");
 		user1 = userRepository.save(user1);
-		final User user2 = user1;
-		assertThrows(CustomException.class, ()->{
-			userService.signup(user2);
+		final ModelMapper mapper = new ModelMapper();
+		final UserDTO user2 = mapper.map(user1, UserDTO.class);
+		assertThrows(CustomException.class, () -> {
+			userService.createUser(user2);
 		});
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {"email1", "Christophe", "Jean"})
+	@ValueSource(strings = { "email1", "Christophe", "Jean" })
 	@DisplayName("Test de la recherche d'un utilisateur en fonction d'un critère.")
 	@Transactional
 	void testSearchUsers(String criteria) {
-		User user1 = new User("name1", "firstName1", criteria+"@", new Date(), "pwd1");
+		User user1 = new User("name1", "firstName1", criteria + "@", new Date(), "pwd1");
 		user1 = userRepository.save(user1);
 
-		List<cvDTO> listUser = userService.searchUsers(criteria, 0, 15);
-		assertTrue(listUser.size() >=1);
+		final List<cvDTO> listUser = userService.searchUsers(criteria, 0, 15);
+		assertTrue(listUser.size() >= 1);
 
 		userRepository.delete(user1);
 	}
 
 	@ParameterizedTest
-	@ValueSource(strings = {"email1", "Christophe", "Jean"})
+	@ValueSource(strings = { "email1", "Christophe", "Jean" })
 	@DisplayName("Test de la récupération du nombre d'utilisateur correspondant à un critère.")
 	@Transactional
 	void testGetDataSize(String criteria) {
-		User user1 = new User("name1", "firstName1", criteria+"@", new Date(), "pwd1");
+		User user1 = new User("name1", "firstName1", criteria + "@", new Date(), "pwd1");
 		user1 = userRepository.save(user1);
 
-		assertTrue(userService.getDataSize(criteria)>=1);
+		assertTrue(userService.getDataSize(criteria) >= 1);
 		userRepository.delete(user1);
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

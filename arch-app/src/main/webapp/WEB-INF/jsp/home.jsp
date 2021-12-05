@@ -5,7 +5,6 @@
 
     <c:url var="app" value="/app.js" />
 
-
     <div id="app">
         <div>
             <nav class="navbar navbar-expand-sm navbar-dark bg-dark justify-content-between">
@@ -51,6 +50,8 @@
         </div>'
     </div>
     <script type="module" src="${app}"></script>
-    <script type="module" src="cv.js"></script>
-    <script type="module" src="login.js"></script>
-    <script type="module" src="cooptation.js"></script>
+    <script type="module" src="/cv.js"></script>
+    <script type="module" src="/login.js"></script>
+    <script type="module" src="/cooptation.js"></script>
+    <script type="module" src="/CvService.js"></script>
+    <script type="module" src="/ActivityService.js"></script>

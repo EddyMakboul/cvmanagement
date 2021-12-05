@@ -16,31 +16,29 @@ public class ActivityService {
 	private ActivityRepository activityRepo;
 
 	public Activity updateActivity(ActivityDTO activity) {
-		User us = activityRepo.findById(activity.getIdActivity()).get().getUser();
-		Activity activityToSave = transformDTOToActivity(activity);
+		final User us = activityRepo.findById(activity.getIdActivity()).get().getUser();
+		final Activity activityToSave = transformDTOToActivity(activity);
 		activityToSave.setUser(us);
 		return activityRepo.save(activityToSave);
 	}
 
 	public Activity transformDTOToActivity(ActivityDTO activityDTO) {
 		final ModelMapper modelMapper = new ModelMapper();
-		Activity activity = modelMapper.map(activityDTO, Activity.class);
+		final Activity activity = modelMapper.map(activityDTO, Activity.class);
 		activity.setIdActivity(activityDTO.getIdActivity());
 		return activity;
 	}
 
-	public Activity remove(long idActivity) {
-		Activity activity = activityRepo.findById(idActivity).get();
-		if(activity != null) {
+	public void remove(long idActivity) {
+		final Activity activity = activityRepo.findById(idActivity).get();
+		if (activity != null) {
 			activityRepo.delete(activity);
-			return activity;
 		}
-		return null;
 	}
 
 	public Activity add(ActivityDTO activityDTO) {
-		Activity activity = transformDTOToActivity(activityDTO);
-		Activity newActivity = activityRepo.save(activity);
+		final Activity activity = transformDTOToActivity(activityDTO);
+		final Activity newActivity = activityRepo.save(activity);
 		return newActivity;
 	}
 

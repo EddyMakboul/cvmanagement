@@ -2,7 +2,6 @@ import { cv } from './cv.js'
 import { modifyCv } from './cv.js'
 import { addActivity } from './cv.js'
 import { cvService } from './CvService.js'
-
 import { Login } from './login.js'
 import { Cooptation } from './cooptation.js'
 
@@ -10,26 +9,6 @@ axios = axios.create({
   baseURL: 'http://localhost:8081/api/',
   headers: { 'Content-Type': 'application/json' },
 });
-
-
-
-class ActivityService {
-  updateActivity(activity) {
-    return axios.put('/activities', activity);
-  }
-
-  removeActivity(idActivity) {
-    // alert(idActivity);
-    return axios.delete('/activities', { data: { idActivity } });
-  }
-
-  addActivity(activity) {
-    return axios.post('/activities', activity);
-  }
-}
-
-
-export const activityService = new ActivityService();
 
 const allCv = {
   template:
@@ -81,28 +60,20 @@ const allCv = {
     getNextPage() {
       if (this.page < this.pageMax - 1) {
         this.page += 1;
-        cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
-          this.cvs = response.data;
-        })
-
+        this.getCvs();
       }
-
 
     },
     getPreviousPage() {
       if (this.page > 0) {
         this.page -= 1;
-        cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
-          this.cvs = response.data;
-        })
+        this.getCvs()
       }
 
     },
     searchCvs() {
       this.page = 0;
-      cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
-        this.cvs = response.data;
-      })
+      this.getCvs();
       this.getSize();
 
     },
@@ -113,33 +84,34 @@ const allCv = {
         if (this.pageMax < response.data / this.size) {
           this.pageMax += 1;
         }
-        console.log(this.pageMax)
+      })
+    },
+
+    getCvs() {
+      cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
+        this.cvs = response.data;
       })
     }
 
+
   },
   created() {
-    cvService.searchCvByCriteria(this.cvFilter, this.page, this.size).then((response) => {
-      this.cvs = response.data;
-    })
+
+    this.getCvs();
+    this.getSize();
+
     var jwt = localStorage.getItem('jwt')
+
     if (jwt != null) {
       cvService.isConnected(jwt).then((response) => {
         if (!response.data) {
           this.localStorage.removeItem('jwt');
+          this.$router.push('/');
         }
       })
     }
-    else {
-      this.localStorage.removeItem('jwt');
-    }
-
-    this.getSize();
-
   }
 }
-
-
 
 const routes = [
   { path: '/', component: allCv },

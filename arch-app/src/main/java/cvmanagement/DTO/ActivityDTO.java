@@ -1,15 +1,23 @@
 package cvmanagement.DTO;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import cvmanagement.entities.User;
 
 public class ActivityDTO {
 
 	private long idActivity;
 
+	@NotNull(message = "must be not null")
+	@Min(value = 1, message = "must be not null")
 	private int year;
 
+	@NotBlank(message = "must be not null")
 	private String nature;
 
+	@NotBlank(message = "must be not null")
 	private String title;
 
 	private String description;
@@ -84,7 +92,5 @@ public class ActivityDTO {
 	public void setUser(User user) {
 		this.user = user;
 	}
-
-
 
 }

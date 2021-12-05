@@ -1,5 +1,5 @@
 import { cvService } from './CvService.js'
-import { activityService } from './app.js'
+import { activityService } from './ActivityService.js'
 
 export const cv = {
     template: '<div class="container-fluid px-1 py-5 mx-auto">\n' +
@@ -47,14 +47,14 @@ export const cv = {
         '                                    </tr>\n' +
         '                                </thead>\n' +
         '                                <tbody>\n' +
-        '                                    <tr v-for="cv in cv?.activities">\n' +
-        '                                        <td> {{cv?.title }}</td>\n' +
-        '                                        <td> {{cv?.nature}}</td>\n' +
-        '                                        <td> {{cv?.description}}</td>\n' +
-        '                                        <td> {{cv?.year}}</td>\n' +
-        '                                        <td> {{cv?.webSite}}</td>\n' +
+        '                                    <tr v-for="activity in cv?.activities">\n' +
+        '                                        <td> {{activity?.title }}</td>\n' +
+        '                                        <td> {{activity?.nature}}</td>\n' +
+        '                                        <td> {{activity?.description}}</td>\n' +
+        '                                        <td> {{activity?.year}}</td>\n' +
+        '                                        <td> {{activity?.webSite}}</td>\n' +
         '                                        <div v-if="goodUser">\n' +
-        '                                            <td><button class="btn btn-danger" v-on:click.prevent="deleteActivity(idUser)">Supprimer</button>\n' +
+        '                                            <td><button class="btn btn-danger" v-on:click.prevent="deleteActivity(activity.idActivity)">Supprimer</button>\n' +
         '                                            </td>\n' +
         '                                        </div>\n' +
         '                                    </tr>\n' +
@@ -80,15 +80,15 @@ export const cv = {
 
     },
     methods: {
-        deleteActivity(idUser) {
+        deleteActivity(idActivity) {
             var resultat = confirm("Voulez-vous vraiment supprimer cette activité ?");
             if (resultat == true) {
-                activityService.removeActivity(idUser);
-                cvService.getCvByUserId(this.idUser).then((response) => {
-                    this.cv = response.data;
-                    this.idUser = this.$route.params.id;
+                activityService.removeActivity(idActivity).then((response) => {
+                    cvService.getCvByUserId(this.idUser).then((response) => {
+                        this.cv = response.data;
+                        this.idUser = this.$route.params.id;
+                    })
                 })
-                // this.$router.push('/cv/'+this.idUser);
             }
         }
     },
@@ -117,43 +117,69 @@ export const cv = {
 
 export const addActivity = {
     template: '<div>\n' +
-        '<table class="table table-striped">\n' +
-        '          <thead>\n' +
-        '          <tr>\n' +
-        '               <th>Title</th>\n' +
-        '               <th>Nature</th>\n' +
-        '               <th>Description</th>\n' +
-        '               <th>Year</th>\n' +
-        '               <th>Website</th>\n' +
-        '          </tr>\n' +
-        '          </thead>\n' +
-        '\n' +
-        '          <tbody>\n' +
-        '          <tr>\n' +
-        '               <td><input type="text" v-model="cv.title" /></td>\n' +
-        '               <td><input type="text" v-model="cv.nature"/></td>\n' +
-        '               <td><input type="text" v-model="cv.description"/></td>\n' +
-        '               <td><input type="text" v-model="cv.year"/></td>\n' +
-        '               <td><input type="text" v-model="cv.webSite"/></td>' +
-        '          </tr>\n' +
-        '          </tbody>\n' +
-        '          </table>\n' +
-        '          <button class="btn btn-primary" type="submit" v-on:click.prevent="goCvPage()">Save</button>\n ' +
-        '          <button class="btn btn-danger" type="submit" v-on:click.prevent="cancel()">abort</button>\n ' +
-        '</div>\n',
+        '    <h1 class="d-flex justify-content-center text-dark">Add Activity</h1>\n' +
+        '    <div class="border border-secondary rounded p-3">\n' +
+        '        <form class="form-center edit-person" id="app" method="post" novalidate="true">\n' +
+        '            <div class="form-group">\n' +
+        '                <label>title :</label>\n' +
+        '                <input type="text" v-model="activity.title" class="form-control" placeholder="experience title" />\n' +
+        '                <div v-if="(errors?.title)" class="alert alert-warning">\n' +
+        '                    {{errors?.title}}\n' +
+        '                </div>\n' +
+        '            </div>\n' +
+        '            <div class="form-group">\n' +
+        '                <label>nature :</label>\n' +
+        '                <input type="text" v-model="activity.nature" class="form-control" placeholder="experience nature" />\n' +
+        '                <div v-if="(errors?.nature)" class="alert alert-warning">\n' +
+        '                    {{errors.nature}}\n' +
+        '                </div>\n' +
+        '            </div>\n' +
+        '            <div class="form-group">\n' +
+        '                <label>description :</label>\n' +
+        '                <input type="text" v-model="activity.description" class="form-control"\n' +
+        '                    placeholder="experience description" />\n' +
+        '                <div v-if="(errors?.description)" class="alert alert-warning">\n' +
+        '                    {{errors.description}}\n' +
+        '                </div>\n' +
+        '            </div>\n' +
+        '            <div class="form-group">\n' +
+        '                <label>year :</label>\n' +
+        '                <input type="number" v-model="activity.year" class="form-control" placeholder="year of experience" />\n' +
+        '                <div v-if="(errors?.year)" class="alert alert-warning">\n' +
+        '                    {{errors.year}}\n' +
+        '                </div>\n' +
+        '            </div>\n' +
+        '            <div class="form-group">\n' +
+        '                <label>webSite :</label>\n' +
+        '                <input type="webSite" v-model="activity.webSite" class="form-control" placeholder="link to project" />\n' +
+        '                <div v-if="(errors?.webSite)" class="alert alert-warning">\n' +
+        '                    {{errors.webSite}}\n' +
+        '                </div>\n' +
+        '            </div>\n' +
+        '            <div class="form-validator">\n' +
+        '                <button type="submit" v-on:click.prevent="goCvPage()" class="btn btn-primary">Save</button>\n' +
+        '                <button class="btn btn-danger" type="submit" v-on:click.prevent="cancel()"> Abort</button>\n' +
+        '            </div>\n' +
+        '        </form>\n' +
+        '    </div>\n' +
+        '</div>',
     data() {
         return {
             idUser: null,
-            cv: {},
+            activity: {},
             user: null,
+            errors: [],
         }
     },
     methods: {
         goCvPage() {
-            this.cv.user = this.user;
-            this.cv.idActivity = -1;
-            activityService.addActivity(this.cv);
-            this.$router.push('/cv/' + this.idUser);
+            this.activity.user = this.user;
+            activityService.addActivity(this.activity).then((response) => {
+                this.$router.push('/cv/' + this.idUser);
+            }).catch((error) => {
+                this.errors = error.response.data;
+            })
+
         },
         cancel() {
             this.$router.push('/cv/' + this.idUser);

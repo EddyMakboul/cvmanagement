@@ -9,6 +9,8 @@ import javax.validation.constraints.Size;
 
 public class UserDTO {
 
+	private Long idUser;
+
 	@NotBlank(message = "the name must be not null")
 	private String nom;
 
@@ -28,12 +30,17 @@ public class UserDTO {
 	@NotBlank(message = "the password must be not null")
 	private String password;
 
-	public UserDTO() {
-		super();
-	}
-
 	public String getNom() {
 		return nom;
+	}
+
+	public UserDTO(String nom, String firstname, String email, Date birthDay, String password) {
+		super();
+		this.nom = nom;
+		this.firstname = firstname;
+		this.email = email;
+		this.birthDay = birthDay;
+		this.password = password;
 	}
 
 	public void setNom(String nom) {
@@ -78,6 +85,18 @@ public class UserDTO {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public Long getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(Long idUser) {
+		this.idUser = idUser;
+	}
+
+	public UserDTO() {
+		super();
 	}
 
 }
